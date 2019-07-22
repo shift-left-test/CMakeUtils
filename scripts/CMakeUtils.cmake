@@ -16,9 +16,6 @@ endif()
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage")
 
-# Enable testing for the project
-enable_testing()
-
 # An helper function to build libraries
 function(build_library)
   set(oneValueArgs TYPE NAME PREFIX SUFFIX VERSION ALIAS)

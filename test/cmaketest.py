@@ -45,6 +45,26 @@ class Output:
         """
         return self.output
 
+class Outputs:
+    def __init__(self):
+        self.outputs = {}
+
+    def __getitem__(self, key):
+        return self.outputs[key]
+
+    def __setitem__(self, key, value):
+        self.outputs[key] = value
+
+    def empty(self):
+        return all(output.empty() for output in self.outputs.values())
+
+    def emptyOf(self, *keys):
+        filtered = []
+        for key, value in self.outputs.items():
+            if key in keys:
+                filtered.append(value)
+        return all(output.empty() for output in filtered)
+
 class Phase:
     """The phase class to distinguish between the configuration stage (cmake)
     and the actual build stage (make).
@@ -94,9 +114,17 @@ class BuildResult:
           test (Phase): test stdout and stderr
         """
         self.tempDir = tempDir
-        self.cmake = cmake
-        self.make = make
-        self.test = test
+
+        self.stdout = Outputs()
+        self.stdout["cmake"] = cmake.stdout
+        self.stdout["make"] = make.stdout
+        self.stdout["test"] = test.stdout
+
+        self.stderr = Outputs()
+        self.stderr["cmake"] = cmake.stderr
+        self.stderr["make"] = make.stderr
+        self.stderr["test"] = test.stderr
+
         self.compile = CompileCommands(self.resolve("compile_commands.json"))
 
     def files(self):

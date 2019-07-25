@@ -7,7 +7,7 @@ include(CMakeUtils)
 build_program(
   NAME a
   SRCS a.cpp
-  PUBLIC_HEADERS "${CMAKE_SOURCE_DIR}/include"
+  PUBLIC_HEADERS "${CMAKE_CURRENT_LIST_DIR}/include"
 )
 
 build_program(

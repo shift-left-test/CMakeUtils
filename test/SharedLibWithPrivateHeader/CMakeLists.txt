@@ -7,7 +7,7 @@ include(CMakeUtils)
 build_shared_library(
   NAME a
   SRCS a.cpp
-  PRIVATE_HEADERS "${CMAKE_SOURCE_DIR}/include"
+  PRIVATE_HEADERS "${CMAKE_CURRENT_LIST_DIR}/include"
 )
 
 build_program(

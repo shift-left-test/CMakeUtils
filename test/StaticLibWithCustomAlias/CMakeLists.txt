@@ -8,7 +8,7 @@ build_static_library(
   NAME a
   ALIAS c
   SRCS a.cpp
-  PUBLIC_HEADERS "${CMAKE_SOURCE_DIR}/include"
+  PUBLIC_HEADERS "${CMAKE_CURRENT_LIST_DIR}/include"
 )
 
 build_program(

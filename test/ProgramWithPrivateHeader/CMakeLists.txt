@@ -7,5 +7,5 @@ include(CMakeUtils)
 build_program(
   NAME main
   SRCS main.cpp
-  PRIVATE_HEADERS "${CMAKE_SOURCE_DIR}/include"
+  PRIVATE_HEADERS "${CMAKE_CURRENT_LIST_DIR}/include"
 )

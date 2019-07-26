@@ -29,16 +29,28 @@ class Output(object):
         """
         return not self.output.strip()
 
-    def contains(self, text):
-        """Assert that the output contains the given text
+    def contains(self, keyword):
+        """Assert that the output contains the given keyword
 
         Args:
-          text (str): text to examine
+         keyword (str): text to examine
 
         Returns:
           True if the output contains the text, False otherwise
         """
-        return text in self.output
+        return keyword in self.output
+
+    def containsAll(self, *keywords):
+        for keyword in keywords:
+            if not self.contains(keyword):
+                return False
+        return True
+
+    def containsAny(self, *keywords):
+        for keyword in keywords:
+            if keyword in self.output:
+                return True
+        return False
 
     def __str__(self):
         """Print the console output string
@@ -108,13 +120,14 @@ class BuildResult(object):
     cmake script.
     """
 
-    def __init__(self, tempDir, cmake, make, test):
+    def __init__(self, tempDir, cmake, make, check, test):
         """Default constructor
 
         Args:
           tempDir (file): path to a temporary directory
           cmake (Phase): cmake stdout and stderr
           make (Phase): make stdout and stderr
+          check (Phase): check stdout and stderr
           test (Phase): test stdout and stderr
         """
         self.tempDir = tempDir
@@ -122,11 +135,13 @@ class BuildResult(object):
         self.stdout = Outputs()
         self.stdout["cmake"] = cmake.stdout
         self.stdout["make"] = make.stdout
+        self.stdout["check"] = check.stdout
         self.stdout["test"] = test.stdout
 
         self.stderr = Outputs()
         self.stderr["cmake"] = cmake.stderr
         self.stderr["make"] = make.stderr
+        self.stderr["check"] = check.stderr
         self.stderr["test"] = test.stderr
 
         self.compile = CompileCommands(self.resolve("compile_commands.json"))
@@ -195,6 +210,7 @@ class CMakeTestUtil(object):
         return BuildResult(tempDir,
                            execute("cmake -S{0} -B{1} -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)),
                            execute("make -C {0}".format(tempDir)),
+                           execute("make check -C {0}".format(tempDir)),
                            execute("make test -C {0}".format(tempDir)))
 
 

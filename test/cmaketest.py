@@ -208,7 +208,7 @@ class CMakeTestUtil(object):
         cmakeDir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts")
 
         return BuildResult(tempDir,
-                           execute("cmake -S{0} -B{1} -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)),
+                           execute("cmake -H{0} -B{1} -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)),
                            execute("make -C {0}".format(tempDir)),
                            execute("make check -C {0}".format(tempDir)),
                            execute("make test -C {0}".format(tempDir)))

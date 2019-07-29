@@ -6,6 +6,12 @@ import shutil
 import unittest
 import json
 
+# Enumeration of cmake phases
+CMAKE = 1
+MAKE = 2
+CHECK = 4
+TEST = 8
+
 
 class Output(object):
     """The console output holder class.
@@ -100,16 +106,20 @@ class Phase(object):
 class CompileCommands(object):
     """This class holds the information of compilation commands
     """
-    def __init__(self, filename):
-        try:
-            self.commands = json.load(open(filename, "r"))
-        except:
-            self.commands = []
+    def __init__(self, tempDir):
+        self.tempDir = tempDir
 
     def commandOf(self, filename):
         """Return the relevant compile command of the given file
         """
-        for command in self.commands:
+        commands = {}
+        try:
+            f = os.path.join(self.tempDir, "compile_commands.json")
+            commands = json.load(open(f, "r"))
+        except:
+            return ""
+
+        for command in commands:
             if command["file"].endswith(filename):
                 return command["command"]
         return ""
@@ -120,31 +130,20 @@ class BuildResult(object):
     cmake script.
     """
 
-    def __init__(self, tempDir, cmake, make, check, test):
+    def __init__(self, tempDir):
         """Default constructor
 
         Args:
           tempDir (file): path to a temporary directory
-          cmake (Phase): cmake stdout and stderr
-          make (Phase): make stdout and stderr
-          check (Phase): check stdout and stderr
-          test (Phase): test stdout and stderr
         """
         self.tempDir = tempDir
-
         self.stdout = Outputs()
-        self.stdout["cmake"] = cmake.stdout
-        self.stdout["make"] = make.stdout
-        self.stdout["check"] = check.stdout
-        self.stdout["test"] = test.stdout
-
         self.stderr = Outputs()
-        self.stderr["cmake"] = cmake.stderr
-        self.stderr["make"] = make.stderr
-        self.stderr["check"] = check.stderr
-        self.stderr["test"] = test.stderr
+        self.compile = CompileCommands(tempDir)
 
-        self.compile = CompileCommands(self.resolve("compile_commands.json"))
+    def append(self, key, value):
+        self.stdout[key] = value.stdout
+        self.stderr[key] = value.stderr
 
     def files(self):
         """List of the files within the build directory
@@ -186,12 +185,13 @@ class CMakeTestUtil(object):
             except OSError as e:
                 print(e)
 
-    def runCMake(self, sourceDir):
+    def runCMake(self, sourceDir, phases):
         """Execute a CMakeLists.txt under the given source directory and
         return the result as an instance of BuildResult
 
         Args:
           sourceDir (str): path to a directory which contains a CMakeLists.txt
+          phases (enum): set of cmake commands to trigger
 
         Returns:
           BuildResult instance
@@ -207,11 +207,18 @@ class CMakeTestUtil(object):
 
         cmakeDir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts")
 
-        return BuildResult(tempDir,
-                           execute("cmake -H{0} -B{1} -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)),
-                           execute("make -C {0}".format(tempDir)),
-                           execute("make check -C {0}".format(tempDir)),
-                           execute("make test -C {0}".format(tempDir)))
+        result = BuildResult(tempDir)
+
+        if (phases & CMAKE):
+            result.append("cmake", execute("cmake -H{0} -B{1} -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)))
+        if (phases & MAKE):
+            result.append("make", execute("make -C {0}".format(tempDir)))
+        if (phases & CHECK):
+            result.append("check", execute("make check -C {0}".format(tempDir)))
+        if (phases & TEST):
+            result.append("test", execute("make test -C {0}".format(tempDir)))
+
+        return result
 
 
 class TestCase(unittest.TestCase):
@@ -225,5 +232,5 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         del self.util
 
-    def runCMake(self, sourceDir):
-        return self.util.runCMake(sourceDir)
+    def runCMake(self, sourceDir, phases = CMAKE | MAKE | CHECK | TEST):
+        return self.util.runCMake(sourceDir, phases)

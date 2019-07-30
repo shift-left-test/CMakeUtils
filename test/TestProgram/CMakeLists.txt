@@ -4,10 +4,9 @@ project(test)
 
 include(CMakeUtils)
 
+enable_testing()
+
 build_test_program(
   NAME MyTest
   SRCS MyTest.cpp
 )
-
-enable_testing()
-enable_static_analysis()

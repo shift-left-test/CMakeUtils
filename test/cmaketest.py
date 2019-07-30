@@ -9,8 +9,7 @@ import json
 # Enumeration of cmake phases
 CMAKE = 1
 MAKE = 2
-CHECK = 4
-TEST = 8
+TEST = 4
 
 
 class Output(object):
@@ -213,8 +212,6 @@ class CMakeTestUtil(object):
             result.append("cmake", execute("cmake -H{0} -B{1} -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)))
         if (phases & MAKE):
             result.append("make", execute("make -C {0}".format(tempDir)))
-        if (phases & CHECK):
-            result.append("check", execute("make check -C {0}".format(tempDir)))
         if (phases & TEST):
             result.append("test", execute("make test -C {0}".format(tempDir)))
 
@@ -232,5 +229,5 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         del self.util
 
-    def runCMake(self, sourceDir, phases = CMAKE | MAKE | CHECK | TEST):
+    def runCMake(self, sourceDir, phases = CMAKE | MAKE | TEST):
         return self.util.runCMake(sourceDir, phases)

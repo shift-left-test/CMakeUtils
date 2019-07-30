@@ -6,12 +6,6 @@ import shutil
 import unittest
 import json
 
-# Enumeration of cmake phases
-CMAKE = 1
-MAKE = 2
-TEST = 4
-
-
 class Output(object):
     """The console output holder class.
 
@@ -184,13 +178,12 @@ class CMakeTestUtil(object):
             except OSError as e:
                 print(e)
 
-    def runCMake(self, sourceDir, phases):
+    def runCMake(self, sourceDir):
         """Execute a CMakeLists.txt under the given source directory and
         return the result as an instance of BuildResult
 
         Args:
           sourceDir (str): path to a directory which contains a CMakeLists.txt
-          phases (enum): set of cmake commands to trigger
 
         Returns:
           BuildResult instance
@@ -207,14 +200,10 @@ class CMakeTestUtil(object):
         cmakeDir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts")
 
         result = BuildResult(tempDir)
-
-        if (phases & CMAKE):
-            result.append("cmake", execute("cmake -H{0} -B{1} -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)))
-        if (phases & MAKE):
-            result.append("make", execute("make -C {0}".format(tempDir)))
-        if (phases & TEST):
-            result.append("test", execute("make test -C {0}".format(tempDir)))
-
+        result.append("cmake", execute("cmake -H{0} -B{1} -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)))
+        result.append("make", execute("make all -C {0}".format(tempDir)))
+        result.append("test", execute("make test -C {0}".format(tempDir)))
+        result.append("package", execute("make package -C {0}".format(tempDir)))
         return result
 
 
@@ -229,5 +218,5 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         del self.util
 
-    def runCMake(self, sourceDir, phases = CMAKE | MAKE | TEST):
-        return self.util.runCMake(sourceDir, phases)
+    def runCMake(self, sourceDir):
+        return self.util.runCMake(sourceDir)

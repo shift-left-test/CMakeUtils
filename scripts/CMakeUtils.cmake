@@ -190,3 +190,63 @@ endmacro()
 macro(build_test_program)
   build_executable(TYPE test ${ARGN})
 endmacro()
+
+
+function(build_debian_package)
+  set(oneValueArgs MAINTAINER CONTACT HOMEPAGE VENDOR DESCRIPTION)
+  cmake_parse_arguments(PKG
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN})
+
+  set(CPACK_GENERATOR DEB)
+
+  if(PKG_MAINTAINER)
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER ${PKG_MAINTAINER})
+  endif()
+
+  if(PKG_CONTACT)
+    set(CPAKC_DEBIAN_PACKAGE_CONTACT ${PKG_CONTACT})
+  endif()
+
+  if(PKG_HOMEPAGE)
+    set(CPACK_DEBIAN_PACKAGE_HOMEPAGE ${PKG_HOMEPAGE})
+  endif()
+
+  set(CPACK_PACKAGE_NAME ${PROJECT_NAME})
+
+  if(PKG_VENDOR)
+    set(CPACK_PACKAGE_VENDOR ${PKG_VENDOR})
+  endif()
+
+  set(CPACK_PACKAGE_VERSION ${PROJECT_VERSION})
+
+  if(PKG_SUMMARY)
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY ${PKG_SUMMARY})
+  endif()
+
+  if(EXISTS "${CMAKE_SOURCE_DIR}/LICENSE")
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+  elseif(EXISTS "${CMAKE_SOURCE_DIR}/LICENSE.md")
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE.md")
+  endif()
+
+  if(NOT CPACK_DEBIAN_PACKAGE_ARCHITECTURE)
+    find_program(DPKG_PATH dpkg)
+    if(NOT DPKG_PATH)
+      set(CPACK_DEBIAN_PACKAGE_ARCHITECTURE i386)
+    else()
+      execute_process(
+	COMMAND "${DPKG_PATH}" --print-architecture
+	OUTPUT_VARIABLE CPACK_DEBIAN_PACKAGE_ARCHITECTURE
+	OUTPUT_STRIP_TRAILING_WHITESPACE
+	)
+    endif()
+  endif()
+
+  set(CPACK_PACKAGE_FILE_NAME
+    "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
+
+  include(CPack)
+endfunction()

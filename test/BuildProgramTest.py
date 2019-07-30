@@ -5,18 +5,16 @@ import unittest
 
 
 class BuildProgramTest(cmaketest.TestCase):
-    phases = cmaketest.CMAKE | cmaketest.MAKE
-
     def testCreateProgram(self):
-        result = self.runCMake("test/Program", self.phases)
-        assert result.stderr.empty()
+        result = self.runCMake("test/Program")
+        assert result.stderr.emptyOf("cmake", "make")
         assert "main" in result.files()
         assert result.stdout["cmake"].contains("Build Type: Debug")
         assert "-O0 -g -fprofile-arcs -ftest-coverage" in result.compile.commandOf("main.cpp")
 
     def testCreateProgramWithReleaseMode(self):
-        result = self.runCMake("test/ProgramWithReleaseMode", self.phases)
-        assert result.stderr.empty()
+        result = self.runCMake("test/ProgramWithReleaseMode")
+        assert result.stderr.emptyOf("cmake", "make")
         assert "main" in result.files()
         assert result.stdout["cmake"].contains("Build Type: Release")
         assert "-O3 -DNDEBUG" in result.compile.commandOf("main.cpp")
@@ -32,13 +30,13 @@ class BuildProgramTest(cmaketest.TestCase):
         assert "main" in result.files()
 
     def testCreateProgramWithPrivateHeader(self):
-        result = self.runCMake("test/ProgramWithPrivateHeader", self.phases)
-        assert result.stderr.empty()
+        result = self.runCMake("test/ProgramWithPrivateHeader")
+        assert result.stderr.emptyOf("cmake", "make")
         assert "main" in result.files()
 
     def testCreateProgramWithPublicHeader(self):
-        result = self.runCMake("test/ProgramWithPublicHeader", self.phases)
-        assert result.stderr.empty()
+        result = self.runCMake("test/ProgramWithPublicHeader")
+        assert result.stderr.emptyOf("cmake", "make")
         assert "main" in result.files()
 
     def testCreateProgramWithAnotherProgram(self):
@@ -49,8 +47,8 @@ class BuildProgramTest(cmaketest.TestCase):
         assert not "b" in result.files()
 
     def testCreateProgramWithCompileFlags(self):
-        result = self.runCMake("test/ProgramWithFlags", self.phases)
-        assert result.stderr.empty()
+        result = self.runCMake("test/ProgramWithFlags")
+        assert result.stderr.emptyOf("cmake", "make")
         assert "-DC -DCPP" in result.compile.commandOf("c.c")
         assert "-DCPP -DCXX" in result.compile.commandOf("cpp.cpp")
         assert "main" in result.files()

@@ -88,6 +88,10 @@ compile_commands.json
 CTestTestfile.cmake
 _deps
 
+CPackConfig.cmake
+CPackSourceConfig.cmake
+_CPack_Packages/
+
 ### CMake Patch ###
 # External projects
 *-prefix/
@@ -301,5 +305,6 @@ tags
 [._]*.un~
 
 result.xml
+*.deb
 
 # End of https://www.gitignore.io/api/c,vim,c++,cmake,linux,emacs,python

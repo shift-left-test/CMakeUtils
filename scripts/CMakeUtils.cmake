@@ -16,6 +16,20 @@ endif()
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g -fprofile-arcs -ftest-coverage")
 
+# Macro to set C standard flags
+macro(set_c_standard VERSION)
+  set(CMAKE_C_STANDARD_REQUIRED ON)
+  set(CMAKE_C_STANDARD ${VERSION})
+  set(CMAKE_C_EXTENSIONS OFF)
+endmacro()
+
+# Macro to set CXX standard flags
+macro(set_cxx_standard VERSION)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(CMAKE_CXX_STANDARD ${VERSION})
+  set(CMAKE_CXX_EXTENSIONS OFF)
+endmacro()
+
 # Resolve absolute paths of the given files
 function(absolute_paths VARIABLE)
   set(result "")

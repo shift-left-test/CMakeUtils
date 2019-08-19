@@ -1,0 +1,9 @@
+// Copyright 2019 LG Electronics. All rights reserved.
+
+#ifndef TEST_CHECKWITHALLAGAINSTVALIDCODE_LIBA_INCLUDE_A_HPP_
+#define TEST_CHECKWITHALLAGAINSTVALIDCODE_LIBA_INCLUDE_A_HPP_
+
+int plus(int a, int b);
+int minus(int a, int b);
+
+#endif  // TEST_CHECKWITHALLAGAINSTVALIDCODE_LIBA_INCLUDE_A_HPP_

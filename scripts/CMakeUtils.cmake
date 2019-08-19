@@ -40,6 +40,19 @@ function(absolute_paths VARIABLE)
   set(${VARIABLE} ${result} PARENT_SCOPE)
 endfunction()
 
+# Prepare variables for static analysis
+set_property(GLOBAL PROPERTY ALL_SOURCE_FILES)
+set_property(GLOBAL PROPERTY ALL_HEADER_DIRS)
+
+# Add global property
+function(add_global_property VARIABLE)
+  get_property(temp GLOBAL PROPERTY ${VARIABLE})
+  foreach(arg ${ARGN})
+    set(temp ${temp} ${arg})
+  endforeach()
+  set_property(GLOBAL PROPERTY ${VARIABLE} ${temp})
+endfunction()
+
 # An helper function to build libraries
 function(build_library)
   set(oneValueArgs TYPE NAME PREFIX SUFFIX VERSION ALIAS)
@@ -55,7 +68,7 @@ function(build_library)
 
   # Accumulate the source files for static analysis
   absolute_paths(CURRENT_SOURCE_FILES ${BUILD_SRCS})
-  set(ALL_SOURCE_FILES ${ALL_SOURCE_FILES} ${CURRENT_SOURCE_FILES} PARENT_SCOPE)
+  add_global_property(ALL_SOURCE_FILES ${CURRENT_SOURCE_FILES})
 
   if(BUILD_PUBLIC_HEADERS OR BUILD_PRIVATE_HEADERS)
     target_include_directories(${BUILD_NAME}
@@ -64,7 +77,7 @@ function(build_library)
 
     # Accumulate the headers for static analysis
     absolute_paths(CURRENT_HEADERS ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
-    set(ALL_HEADER_DIRS ${ALL_HEADER_DIRS} ${CURRENT_HEADERS} PARENT_SCOPE)
+    add_global_property(ALL_HEADER_DIRS ${CURRENT_HEADERS})
   endif()
 
   install(
@@ -136,7 +149,7 @@ function(build_executable)
 
   # Accumulate the source files for static analysis
   absolute_paths(CURRENT_SOURCE_FILES ${BUILD_SRCS})
-  set(ALL_SOURCE_FILES ${ALL_SOURCE_FILES} ${CURRENT_SOURCE_FILES} PARENT_SCOPE)
+  add_global_property(ALL_SOURCE_FILES ${CURRENT_SOURCE_FILES})
 
   if(BUILD_PUBLIC_HEADERS OR BUILD_PRIVATE_HEADERS)
     target_include_directories(${BUILD_NAME}
@@ -145,7 +158,7 @@ function(build_executable)
 
     # Accumulate the headers for static analysis
     absolute_paths(CURRENT_HEADERS ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
-    set(ALL_HEADER_DIRS ${ALL_HEADER_DIRS} ${CURRENT_HEADERS} PARENT_SCOPE)
+    add_global_property(ALL_HEADER_DIRS ${CURRENT_HEADERS})
   endif()
 
   string(TOUPPER "${BUILD_TYPE}" BUILD_TYPE)
@@ -263,4 +276,108 @@ function(build_debian_package)
     "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_DEBIAN_PACKAGE_ARCHITECTURE}")
 
   include(CPack)
+endfunction()
+
+# Register the given static analysis checker if available
+function(register_checker)
+  set(oneValueArgs NAME DEPENDS)
+  set(multiValueArgs PATHS NAMES OPTIONS FILES)
+  cmake_parse_arguments(ARGS
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN})
+
+  find_program(${ARGS_NAME}_PROGRAM PATHS ${ARGS_PATHS} NAMES ${ARGS_NAMES})
+  if(${ARGS_NAME}_PROGRAM)
+    message(STATUS "Found ${ARGS_NAME} code checker: TRUE")
+    add_custom_target(
+      ${ARGS_NAME}
+      COMMAND ${${ARGS_NAME}_PROGRAM} ${ARGS_OPTIONS} ${ARGS_FILES}
+      COMMENT "Running ${ARGS_NAME}..."
+    )
+    add_dependencies(${ARGS_DEPENDS} ${ARGS_NAME})
+  else()
+    message(STATUS "Found ${ARGS_NAME} code checker: FALSE")
+  endif()
+endfunction()
+
+# Prepend the given prefix to each of the strings
+function(prepend VARIABLE PREFIX)
+  set(result "")
+  foreach(value ${ARGN})
+    list(APPEND result ${PREFIX}/${value})
+  endforeach()
+  set(${VARIABLE} ${result} PARENT_SCOPE)
+endfunction()
+
+function(find_header_files VARIABLE)
+  set(result "")
+  foreach(directory ${ARGN})
+    file(GLOB_RECURSE foundFiles LIST_DIRECTORIES True "${directory}/*.h" "${directory}/*.hpp")
+    list(APPEND result ${foundFiles})
+  endforeach()
+  set(${VARIABLE} ${result} PARENT_SCOPE)
+endfunction()
+
+
+# Enable the static analysis checkers
+function(enable_static_analysis)
+  set(options ALL CPPLINT CPPCHECK CLANG-TIDY CLANG-FORMAT)
+  cmake_parse_arguments(ENABLE
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN})
+
+  add_custom_target(check)
+
+  get_property(SOURCE_FILES GLOBAL PROPERTY ALL_SOURCE_FILES)
+  get_property(HEADER_DIRS GLOBAL PROPERTY ALL_HEADER_DIRS)
+
+  find_header_files(HEADER_FILES ${HEADER_DIRS})
+
+  if(ENABLE_ALL OR ENABLE_CLANG-FORMAT)
+    register_checker(
+      NAME clang-format
+      DEPENDS check
+      PATHS /usr/bin
+      NAMES clang-format
+      OPTIONS -i -style=Google
+      FILES ${HEADER_FILES} ${SOURCE_FILES}
+      )
+  endif()
+
+  if(ENABLE_ALL OR ENABLE_CLANG-TIDY)
+    register_checker(
+      NAME clang-tidy
+      DEPENDS check
+      PATHS /usr/bin
+      NAMES clang-tidy
+      FILES ${SOURCE_FILES}
+      )
+  endif()
+
+  if(ENABLE_ALL OR ENABLE_CPPLINT)
+    register_checker(
+      NAME cpplint
+      DEPENDS check
+      PATHS /usr/local/bin
+      NAMES cpplint
+      OPTIONS --quiet
+      FILES ${HEADER_FILES} ${SOURCE_FILES}
+      )
+  endif()
+
+  if(ENABLE_ALL OR ENABLE_CPPCHECK)
+    prepend(INCLUDE_HEADER_DIRS "-I" ${HEADER_DIRS})
+    register_checker(
+      NAME cppcheck
+      DEPENDS check
+      PATHS /usr/bin
+      NAMES cppcheck
+      OPTIONS --enable=all --force --quiet --suppress=missingIncludeSystem ${INCLUDE_HEADER_DIRS}
+      FILES ${HEADER_FILES} ${SOURCE_FILES}
+      )
+  endif()
 endfunction()

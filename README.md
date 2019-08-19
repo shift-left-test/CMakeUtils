@@ -97,6 +97,15 @@ build_debian_package(
 )
 ```
 
+To enable static analysis checkers:
+```cmake
+# implicitly enable all checkers
+enable_static_analysis(ALL)
+
+# or explicitly enable checkers
+enable_static_analysis(CPPLINT CPPCHECK CLANG-TIDY CLANG-FORMAT)
+```
+
 ### Licenses
 
 This project source code is available under MIT license. See [LICENSE](LICENSE).

@@ -22,59 +22,78 @@ A set of CMake macro extensions for a C/C++ project
 
 Here are examples of how to use the script to build programs and libraries from source.
 
-To create a simple program:
+To create a program:
 ```cmake
 build_program(
-  NAME name
-  SRCS source.cpp ...
+  NAME <name>
+  PREFIX <prefix>
+  SUFFIX <suffix>
+  SRCS <list of source files>
+  LIBS <list of libraries>
+  PRIVATE_HEADERS <list of private header paths>
+  CFLAGS <list of C compilation flags>
+  CPPFLAGS <list of pre-processing flags>
+  CXXFLAGS <list of CXX compilation flags>
 )
 ```
 
-To create a program with dependent libraries:
-```cmake
-build_program(
-  NAME name
-  SRCS source.cpp ...
-  LIBS nameOfLibrary ...
-)
-```
-
-To create a static library with compilation flags:
+To create a static library:
 ```cmake
 build_static_library(
-  NAME nameOfLibrary
-  SRCS source.cpp ...
-  CPPFLAGS CUSTOM_FLAG ...
+  NAME <name>
+  PREFIX <prefix>
+  SUFFIX <suffix>
+  SRCS <list of source files>
+  LIBS <list of libraries>
+  PRIVATE_HEADERS <list of private header paths>
+  PUBLIC_HEADERS <list of public header paths>
+  CFLAGS <list of C compilation flags>
+  CPPFLAGS <list of pre-processing flags>
+  CXXFLAGS <list of CXX compilation flags>
 )
 ```
 
-To create a static library with private and public headers:
-```cmake
-build_static_library(
-  NAME nameOfLibrary
-  SRCS source.cpp ...
-  CPPFLAGS CUSTOM_FLAG ...
-  PRIVATE_HEADERS path/to/private/header/dir ...
-  PUBLIC_HEADERS path/to/public/header/dir ...
-)
-```
-
-To create a versioned shared library:
+To create a shared library:
 ```cmake
 build_shared_library(
-  NAME nameOfLibrary
-  SRCS source.cpp ...
-  VERSION 1.0.0
-  PUBLIC_HEADERS path/to/public/header/dir ...
+  NAME <name>
+  PREFIX <prefix>
+  SUFFIX <suffix>
+  VERSION <verion number>
+  SRCS <list of source files>
+  LIBS <list of libraries>
+  PRIVATE_HEADERS <list of private header paths>
+  PUBLIC_HEADERS <list of public header paths>
+  CFLAGS <list of C compilation flags>
+  CPPFLAGS <list of pre-processing flags>
+  CXXFLAGS <list of CXX compilation flags>
 )
 ```
 
-To create a unit test program with dependent libraries:
+To create a unit test program:
 ```cmake
 build_test_program(
-  NAME testProgName
-  SRCS unitTest.cpp ...
-  LIBS nameOfLibrary ...
+  NAME <name>
+  PREFIX <prefix>
+  SUFFIX <suffix>
+  SRCS <list of source files>
+  LIBS <list of libraries>
+  PRIVATE_HEADERS <list of private header paths>
+  PUBLIC_HEADERS <list of public header paths>
+  CFLAGS <list of C compilation flags>
+  CPPFLAGS <list of pre-processing flags>
+  CXXFLAGS <list of CXX compilation flags>
+)
+```
+
+To create a debian package (This should be located at the end of the top-level CMakeLists.txt) :
+```cmake
+build_debian_package(
+  MAINTAINER <maintainer>
+  CONTACT <contact information>
+  HOMEPAGE <homepage address>
+  VENDOR <vendor>
+  DESCRITPION <description>
 )
 ```
 

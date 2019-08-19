@@ -1,10 +1,9 @@
 ---
 Checks:          'clang-diagnostic-*,clang-analyzer-*,-clang-analyzer-alpha*,*'
-WarningsAsErrors: ''
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
 User:            sunggon82.kim
-CheckOptions:    
+CheckOptions:
   - key:             cert-dcl59-cpp.HeaderFileExtensions
     value:           h,hh,hpp,hxx
   - key:             cert-err61-cpp.CheckThrowTemporaries
@@ -388,4 +387,3 @@ CheckOptions:
   - key:             readability-simplify-boolean-expr.ChainedConditionalReturn
     value:           '0'
 ...
-

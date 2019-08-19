@@ -97,7 +97,7 @@ build_debian_package(
 )
 ```
 
-To enable static analysis checkers:
+To enable static analysis checkers (This should be located at the end of the top-level CMakeLists.txt) :
 ```cmake
 # implicitly enable all checkers
 enable_static_analysis(ALL)

@@ -351,7 +351,7 @@ function(enable_static_analysis)
     register_checker(
       NAME cpplint
       DEPENDS check
-      PATHS /usr/local/bin
+      PATHS /usr/local/bin $ENV{HOME}/.local/bin
       NAMES cpplint
       OPTIONS --quiet
       FILES ${HEADER_FILES} ${SOURCE_FILES}

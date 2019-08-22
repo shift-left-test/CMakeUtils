@@ -323,7 +323,7 @@ endfunction()
 
 # Enable the static analysis checkers
 function(enable_static_analysis)
-  set(options ALL CPPLINT CPPCHECK CLANG-TIDY CLANG-FORMAT)
+  set(options ALL CPPLINT CPPCHECK CLANG-TIDY)
   cmake_parse_arguments(ENABLE
     "${options}"
     "${oneValueArgs}"
@@ -336,17 +336,6 @@ function(enable_static_analysis)
   get_property(HEADER_DIRS GLOBAL PROPERTY ALL_HEADER_DIRS)
 
   find_header_files(HEADER_FILES ${HEADER_DIRS})
-
-  if(ENABLE_ALL OR ENABLE_CLANG-FORMAT)
-    register_checker(
-      NAME clang-format
-      DEPENDS check
-      PATHS /usr/bin
-      NAMES clang-format
-      OPTIONS -i -style=Google
-      FILES ${HEADER_FILES} ${SOURCE_FILES}
-      )
-  endif()
 
   if(ENABLE_ALL OR ENABLE_CLANG-TIDY)
     register_checker(

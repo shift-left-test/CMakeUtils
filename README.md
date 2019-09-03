@@ -20,7 +20,7 @@ A set of CMake macro extensions for a C/C++ project
 
 ### How to create new predefined C++ project
 
-    $ ./kickstart.py -d <DIRECTORY>
+    $ ./bootstrap.py -d <DIRECTORY>
 
 
 ### Build module recipes

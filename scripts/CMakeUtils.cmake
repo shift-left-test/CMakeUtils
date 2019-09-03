@@ -30,6 +30,16 @@ macro(set_cxx_standard VERSION)
   set(CMAKE_CXX_EXTENSIONS OFF)
 endmacro()
 
+# Macro to include all CMakeLists.txt under subdirectories.
+macro(add_all_subdirectories)
+  file(GLOB_RECURSE allListFiles LIST_DIRECTORIES False "CMakeLists.txt")
+  list(REMOVE_ITEM allListFiles "${CMAKE_SOURCE_DIR}/CMakeLists.txt")
+  foreach(listFile ${allListFiles})
+    get_filename_component(listDirectory ${listFile} DIRECTORY)
+    add_subdirectory(${listDirectory})
+  endforeach()
+endmacro()
+
 # Resolve absolute paths of the given files
 function(absolute_paths VARIABLE)
   set(result "")

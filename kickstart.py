@@ -13,6 +13,13 @@ import sys
 
 GITIGNORE_URL = "https://www.gitignore.io/api/c,vim,c++,gcov,cmake,linux,python"
 
+GITIGNORE_PATCH = """
+CPackConfig.cmake
+CPackSourceConfig.cmake
+*.deb
+_CPack_Packages/
+"""
+
 LICENSE = """MIT License
 
 Copyright (c) {YEAR} {MAINTAINER}
@@ -46,6 +53,7 @@ This is {PROJECT}
 * C++ compiler (c++11 supported)
 * CMake 3.5.1 or above
 * Google Test Framework
+* gcovr
 
 
 ### How to build from source
@@ -54,6 +62,7 @@ This is {PROJECT}
     $ make all
     $ make check
     $ make test
+    $ make coverage
     $ make package
 
 
@@ -72,6 +81,7 @@ include(CMakeUtils)
 set_cxx_standard(11)
 
 enable_testing()
+enable_test_coverage()
 
 add_subdirectory(test)
 
@@ -127,6 +137,7 @@ cmake .
 make all
 make check
 make test
+make coverage
 make package
 """
 
@@ -147,6 +158,13 @@ def readFile(path):
     with open(path, 'r') as f:
         return f.read()
 
+def appendToFile(path, data):
+    print "Append to %s ..." % path
+    if not os.path.exists(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
+    with open(path, 'a') as f:
+        f.write(data)
+
 def writeToFile(path, data):
     print "Write to %s ..." % path
     if not os.path.exists(os.path.dirname(path)):
@@ -161,6 +179,12 @@ def copyFile(src, dest):
         os.makedirs(os.path.dirname(dest))
     shutil.copyfile(src, dest)
 
+CMAKE_UTILS = readFile(os.path.join(os.path.dirname(__file__), "scripts/CMakeUtils.cmake"))
+
+parser = argparse.ArgumentParser(description="Kickstart new C++ project")
+parser.add_argument("-d", "--directory", required=True, help="directory for the new project")
+
+args = parser.parse_args()
 
 properties = {
     "YEAR": datetime.datetime.now().year,
@@ -168,34 +192,30 @@ properties = {
     "PROJECT": "MyProject"
 }
 
-parser = argparse.ArgumentParser(description="Kickstart new C++ project")
-parser.add_argument("-d", "--directory", required=True, help="directory for the new project")
-
-args = parser.parse_args()
-root = args.directory
-
-CMAKE_UTILS = readFile(os.path.join(os.path.dirname(__file__), "scripts/CMakeUtils.cmake"))
-
+def PATH(p):
+    return os.path.join(args.directory, p)
 
 try:
-    initGit(root)
+    initGit(args.directory)
 except Exception as e:
     print e
     sys.exit()
 
 try:
-    runCommand("wget %s -O %s" % (GITIGNORE_URL, os.path.join(root, ".gitignore")))
-    writeToFile(os.path.join(root, "LICENSE"), LICENSE.format(**properties))
-    writeToFile(os.path.join(root, "README.md"), README_MD.format(**properties))
-    writeToFile(os.path.join(root, "CMakeLists.txt"), ROOT_CMAKELISTS.format(**properties))
-    writeToFile(os.path.join(root, "build.sh"), BUILD_SH)
-    runCommand("chmod a+x %s" % os.path.join(root, "build.sh"))
-    writeToFile(os.path.join(root, "scripts/CMakeUtils.cmake"), CMAKE_UTILS)
-    writeToFile(os.path.join(root, "test/CMakeLists.txt"), TEST_CMAKELISTS.format(**properties))
-    writeToFile(os.path.join(root, "test/SampleTest.cpp"), TEST_CPP.format(**properties))
+    runCommand("wget %s -O %s" % (GITIGNORE_URL, PATH(".gitignore")))
+    appendToFile(PATH(".gitignore"), GITIGNORE_PATCH)
+    writeToFile(PATH("LICENSE"), LICENSE.format(**properties))
+    writeToFile(PATH("README.md"), README_MD.format(**properties))
+    writeToFile(PATH("CMakeLists.txt"), ROOT_CMAKELISTS.format(**properties))
+    writeToFile(PATH("build.sh"), BUILD_SH)
+    runCommand("chmod a+x %s" % PATH("build.sh"))
+    writeToFile(PATH("scripts/CMakeUtils.cmake"), CMAKE_UTILS)
+    writeToFile(PATH("test/CMakeLists.txt"), TEST_CMAKELISTS.format(**properties))
+    writeToFile(PATH("test/SampleTest.cpp"), TEST_CPP.format(**properties))
+    runCommand("git -C %s add ." % args.directory)
 except Exception as e:
     print e
     print "Reverting ..."
-    shutil.rmtree(root, ignore_errors=True)
+    shutil.rmtree(args.directory, ignore_errors=True)
 
 print "Done"

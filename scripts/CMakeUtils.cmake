@@ -278,8 +278,8 @@ function(build_debian_package)
   include(CPack)
 endfunction()
 
-# Register the given static analysis checker if available
-function(register_checker)
+# Register the given program if available
+function(register_program)
   set(oneValueArgs NAME DEPENDS)
   set(multiValueArgs PATHS NAMES OPTIONS FILES)
   cmake_parse_arguments(ARGS
@@ -338,7 +338,7 @@ function(enable_static_analysis)
   find_header_files(HEADER_FILES ${HEADER_DIRS})
 
   if(ENABLE_ALL OR ENABLE_CLANG-TIDY)
-    register_checker(
+    register_program(
       NAME clang-tidy
       DEPENDS check
       PATHS /usr/bin
@@ -348,7 +348,7 @@ function(enable_static_analysis)
   endif()
 
   if(ENABLE_ALL OR ENABLE_CPPLINT)
-    register_checker(
+    register_program(
       NAME cpplint
       DEPENDS check
       PATHS /usr/local/bin $ENV{HOME}/.local/bin
@@ -360,7 +360,7 @@ function(enable_static_analysis)
 
   if(ENABLE_ALL OR ENABLE_CPPCHECK)
     prepend(INCLUDE_HEADER_DIRS "-I" ${HEADER_DIRS})
-    register_checker(
+    register_program(
       NAME cppcheck
       DEPENDS check
       PATHS /usr/bin
@@ -369,4 +369,17 @@ function(enable_static_analysis)
       FILES ${HEADER_FILES} ${SOURCE_FILES}
       )
   endif()
+endfunction()
+
+# Enable gcovr for test coverage
+function(enable_test_coverage)
+  add_custom_target(coverage)
+  register_program(
+    NAME gcovr
+    DEPENDS coverage
+    PATHS /usr/local/bin $ENV{HOME}/.local/bin
+    NAMES gcovr
+    OPTIONS -s
+    FILES ""
+    )
 endfunction()

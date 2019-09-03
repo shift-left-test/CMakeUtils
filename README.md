@@ -18,6 +18,11 @@ A set of CMake macro extensions for a C/C++ project
 
     $ ./runtest.sh
 
+### How to create new predefined C++ project
+
+    $ ./kickstart.py -d <DIRECTORY>
+
+
 ### Build module recipes
 
 Here are examples of how to use the script to build programs and libraries from source.
@@ -104,6 +109,11 @@ enable_static_analysis(ALL)
 
 # or explicitly enable checkers
 enable_static_analysis(CPPLINT CPPCHECK CLANG-TIDY CLANG-FORMAT)
+```
+
+To enable test coverage report (requires gcovr)
+```cmake
+enable_test_coverage()
 ```
 
 ### Licenses

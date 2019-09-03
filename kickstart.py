@@ -130,9 +130,9 @@ TEST_F(SampleTest, test1) {{
 """
 
 BUILD_SH = """#!/bin/bash
-cmake .
-make all
-make check
+cmake . || exit 1
+make all -j || exit 1
+make check || exit 1
 make test
 make coverage
 make package

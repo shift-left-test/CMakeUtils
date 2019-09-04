@@ -91,7 +91,7 @@ build_test_program(
 )
 ```
 
-To create a debian package (This function call should be located at the end of the top-level CMakeLists.txt) :
+To create a debian package (This function call should be located at the end of the top-level CMakeLists.txt):
 ```cmake
 build_debian_package(
   MAINTAINER <maintainer>
@@ -102,7 +102,7 @@ build_debian_package(
 )
 ```
 
-To enable static analysis checkers (This function call should be located at the end of the top-level CMakeLists.txt) :
+To enable static analysis checkers (This function call should be located at the end of the top-level CMakeLists.txt):
 ```cmake
 # implicitly enable all checkers
 enable_static_analysis(ALL)
@@ -111,9 +111,12 @@ enable_static_analysis(ALL)
 enable_static_analysis(CPPLINT CPPCHECK CLANG-TIDY CLANG-FORMAT)
 ```
 
-To enable test coverage report (requires gcovr)
+To enable test coverage report (requires gcovr):
 ```cmake
 enable_test_coverage()
+
+# or for branch coverage
+enable_test_coverage(BRANCH_COVERAGE)
 ```
 
 ### Licenses

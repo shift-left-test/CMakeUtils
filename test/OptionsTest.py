@@ -22,6 +22,10 @@ class OptionsTest(cmaketest.TestCase):
         assert result.stderr.emptyOf("cmake", "make")
         assert "/2/2/2/main" in result.files()
 
+    def testEnableTestCoverage(self):
+        result = self.runCMake("test/enable_test_coverage")
+        assert result.stderr.emptyOf("cmake", "make", "test", "coverage")
+        assert result.stdout["coverage"].contains("Branches")
 
 if __name__ == "__main__":
     unittest.main()

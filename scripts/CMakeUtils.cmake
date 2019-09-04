@@ -332,6 +332,7 @@ function(register_program)
   else()
     message(STATUS "Found ${ARGS_NAME} code checker: FALSE")
   endif()
+
 endfunction()
 
 # Prepend the given prefix to each of the strings
@@ -405,13 +406,25 @@ endfunction()
 
 # Enable gcovr for test coverage
 function(enable_test_coverage)
+  set(options BRANCH_COVERAGE)
+  cmake_parse_arguments(ENABLE
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN})
+
   add_custom_target(coverage)
+
+  if(ENABLE_BRANCH_COVERAGE)
+    set(GCOVR_BRANCH_OPTION "-b")
+  endif()
+
   register_program(
     NAME gcovr
     DEPENDS coverage
     PATHS /usr/local/bin $ENV{HOME}/.local/bin
     NAMES gcovr
-    OPTIONS -s
+    OPTIONS ${GCOVR_BRANCH_OPTION} -s -r ${CMAKE_SOURCE_DIR}
     FILES ""
     )
 endfunction()

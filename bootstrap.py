@@ -1,28 +1,10 @@
 #!/usr/bin/python
 #-*- coding: utf-8 -*-
 
-import argparse
-import datetime
-import urllib2
-import getpass
-import subprocess
-import os
-import shutil
-import sys
-
-
-GITIGNORE_URL = "https://www.gitignore.io/api/c,vim,c++,gcov,cmake,linux,python"
-
-GITIGNORE_PATCH = """
-CPackConfig.cmake
-CPackSourceConfig.cmake
-*.deb
-_CPack_Packages/
 """
+MIT License
 
-LICENSE = """MIT License
-
-Copyright (c) {YEAR} {MAINTAINER}
+Copyright (c) 2019 Sung Gon Kim
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -43,176 +25,100 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-README_MD = """# {PROJECT}
+import argparse
+import datetime
+import getpass
+import logging
+import os
+import shutil
+import subprocess
+import sys
 
-This is {PROJECT}
+logging.basicConfig(stream=sys.stdout,
+                    format='%(levelname)-5s [%(lineno)3d]: %(message)s',
+                    level=logging.INFO)
 
-
-### Requirements
-
-* C++ compiler (c++11 supported)
-* CMake 3.5.1 or above
-* Google Test Framework
-* gcovr
-
-
-### How to build from source
-
-    $ cmake .
-    $ make all
-    $ make check
-    $ make test
-    $ make coverage
-    $ make package
-
-
-### Licenses
-
-The project source code is available under MIT license. See [LICENSE](LICENSE).
-"""
-
-ROOT_CMAKELISTS = """cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
-
-project({PROJECT} VERSION 1.0.0)
-
-set(CMAKE_MODULE_PATH ${{CMAKE_SOURCE_DIR}}/scripts)
-include(CMakeUtils)
-
-set_cxx_standard(11)
-
-enable_testing()
-enable_test_coverage()
-add_all_subdirectories()
-enable_static_analysis(ALL)
-build_debian_package(MAINTAINER {MAINTAINER})
-
-"""
-
-TEST_CMAKELISTS = """build_test_program(
-  NAME {PROJECT}Test
-  SUFFIX .exe
-  SRCS SampleTest.cpp
-)
-"""
-
-TEST_CPP = """/*
-  MIT License
-
-  Copyright (c) {YEAR} {MAINTAINER}
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in all
-  copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  SOFTWARE.
-*/
-
-#include <gtest/gtest.h>
-
-class SampleTest : public ::testing::Test {{
-}};
-
-TEST_F(SampleTest, test1) {{
-  EXPECT_EQ(1, 1);
-}}
-"""
-
-BUILD_SH = """#!/bin/bash
-cmake . || exit 1
-make all -j || exit 1
-make check || exit 1
-make test
-make coverage
-make package
-"""
-
-
-def runCommand(command):
-    print "Run: %s ..." % command
-    proc = subprocess.Popen(command, shell = True)
+def execute(command):
+    logging.info("Run: %s ..." % command)
+    proc = subprocess.Popen(command, shell=True)
     return proc.communicate()
 
 def initGit(path):
-    print "Create new directory at %s ..." % path
+    logging.info("Create new directory at %s ..." % path)
     if os.path.exists(path):
-        raise IOError("Directory already exists: %s " % path)
+        raise IOError("Directory already exists: %s" % path)
     os.makedirs(path)
-    runCommand("git init %s" % path)
+    execute("git init %s" % path)
+
+def writeFile(path, data):
+    logging.info("Writing to %s ..." % path)
+    if not os.path.exists(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
+    with open(path, "wb") as f:
+        f.write(data)
+
 
 def readFile(path):
-    with open(path, 'r') as f:
-        return f.read()
+    def readFrom(path):
+        logging.info("Reading from %s ..." % path)
+        with open(path, "rb") as f:
+            return f.read()
 
-def appendToFile(path, data):
-    print "Append to %s ..." % path
-    if not os.path.exists(os.path.dirname(path)):
-        os.makedirs(os.path.dirname(path))
-    with open(path, 'a') as f:
-        f.write(data)
+    def resolve(path):
+        root = os.path.dirname(__file__)
+        return os.path.join(root, path)
 
-def writeToFile(path, data):
-    print "Write to %s ..." % path
-    if not os.path.exists(os.path.dirname(path)):
-        os.makedirs(os.path.dirname(path))
-    with open(path, 'w') as f:
-        f.write(data)
+    return readFrom(resolve(path))
 
 
-def copyFile(src, dest):
-    print "Copy %s to %s ..." % (src, dest)
-    if not os.path.exists(os.path.dirname(dest)):
-        os.makedirs(os.path.dirname(dest))
-    shutil.copyfile(src, dest)
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Bootstrap for new C++ project",
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-d", "--directory", required=True, help="Directory to the new project")
+    parser.add_argument("-m", "--maintainer", default=getpass.getuser(), help="Maintainer of the project")
+    parser.add_argument("-p", "--project", default="MyProject", help="Project name")
 
-CMAKE_UTILS = readFile(os.path.join(os.path.dirname(__file__), "scripts/CMakeUtils.cmake"))
+    args = parser.parse_args()
 
-parser = argparse.ArgumentParser(description="Kickstart new C++ project")
-parser.add_argument("-d", "--directory", required=True, help="directory for the new project")
+    properties = {
+        "YEAR" : datetime.datetime.now().year,
+        "MAINTAINER": args.maintainer,
+        "PROJECT": args.project,
+    }
 
-args = parser.parse_args()
+    def to(path):
+        return os.path.join(args.directory, path)
 
-properties = {
-    "YEAR": datetime.datetime.now().year,
-    "MAINTAINER": getpass.getuser(),
-    "PROJECT": "MyProject"
-}
+    try:
+        initGit(args.directory)
+    except Exception as e:
+        logging.error(e)
+        sys.exit()
 
-def PATH(p):
-    return os.path.join(args.directory, p)
+    try:
+        writeFile(to("scripts/CMakeUtils.cmake"), readFile("scripts/CMakeUtils.cmake"))
 
-try:
-    initGit(args.directory)
-except Exception as e:
-    print e
-    sys.exit()
+        templates = {}
+        templates[".gitignore"] = readFile("resources/gitignore.template")
+        templates["LICENSE"] = readFile("resources/license.template")
+        templates["README.md"] = readFile("resources/readme.template")
+        templates["CMakeLists.txt"] = readFile("resources/root_cmakelists.template")
+        templates["build.sh"] = readFile("resources/build_sh.template")
+        templates["CPPLINT.cfg"] = readFile("resources/cpplint.template")
+        templates["include/echo/echo.hpp"] = readFile("resources/echo_hpp.template")
+        templates["src/echo.cpp"] = readFile("resources/echo_cpp.template")
+        templates["src/CMakeLists.txt"] = readFile("resources/src_cmakelists.template")
+        templates["test/SampleTest.cpp"] = readFile("resources/sampletest_cpp.template")
+        templates["test/CMakeLists.txt"] = readFile("resources/test_cmakelists.template")
+        for path, template in templates.iteritems():
+            writeFile(to(path), template.format(**properties))
 
-try:
-    runCommand("wget %s -O %s" % (GITIGNORE_URL, PATH(".gitignore")))
-    appendToFile(PATH(".gitignore"), GITIGNORE_PATCH)
-    writeToFile(PATH("LICENSE"), LICENSE.format(**properties))
-    writeToFile(PATH("README.md"), README_MD.format(**properties))
-    writeToFile(PATH("CMakeLists.txt"), ROOT_CMAKELISTS.format(**properties))
-    writeToFile(PATH("build.sh"), BUILD_SH)
-    runCommand("chmod a+x %s" % PATH("build.sh"))
-    writeToFile(PATH("scripts/CMakeUtils.cmake"), CMAKE_UTILS)
-    writeToFile(PATH("test/CMakeLists.txt"), TEST_CMAKELISTS.format(**properties))
-    writeToFile(PATH("test/SampleTest.cpp"), TEST_CPP.format(**properties))
-    runCommand("git -C %s add ." % args.directory)
-except Exception as e:
-    print e
-    print "Reverting ..."
-    shutil.rmtree(args.directory, ignore_errors=True)
+        execute("chmod a+x %s" % to("build.sh"))
+        execute("git -C %s add ." % to("."))
 
-print "Done"
+    except Exception as e:
+        logging.error(e)
+        logging.info("Reverting ...")
+        shutil.rmtree(args.directory, ignore_errors=True)
+
+    logging.info("Done")

@@ -198,6 +198,13 @@ function(build_executable)
   if(BUILD_TYPE STREQUAL "TEST")
     find_package(Threads REQUIRED)
     find_package(GTest REQUIRED)
+
+    set_target_properties(${BUILD_NAME} PROPERTIES
+      CXX_STANDARD 11
+      CXX_STANDARD_REQUIRED ON
+      CXX_EXTENSIONS OFF
+    )
+
     target_include_directories(${BUILD_NAME} PRIVATE ${GTEST_INCLUDE_DIRS})
     target_link_libraries(${BUILD_NAME}
       PRIVATE ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})

@@ -322,7 +322,7 @@ function(register_program)
 
   find_program(${ARGS_NAME}_PROGRAM PATHS ${ARGS_PATHS} NAMES ${ARGS_NAMES})
   if(${ARGS_NAME}_PROGRAM)
-    message(STATUS "Found ${ARGS_NAME} code checker: TRUE")
+    message(STATUS "Found ${ARGS_NAME} program: TRUE")
     add_custom_target(
       ${ARGS_NAME}
       COMMAND ${${ARGS_NAME}_PROGRAM} ${ARGS_OPTIONS} ${ARGS_FILES}
@@ -330,7 +330,7 @@ function(register_program)
     )
     add_dependencies(${ARGS_DEPENDS} ${ARGS_NAME})
   else()
-    message(STATUS "Found ${ARGS_NAME} code checker: FALSE")
+    message(STATUS "Found ${ARGS_NAME} program: FALSE")
   endif()
 
 endfunction()

@@ -376,6 +376,7 @@ function(enable_static_analysis)
       DEPENDS check
       PATHS /usr/bin
       NAMES clang-tidy
+      OPTIONS -p=${CMAKE_BINARY_DIR}
       FILES ${SOURCE_FILES}
       )
   endif()
@@ -424,7 +425,7 @@ function(enable_test_coverage)
     DEPENDS coverage
     PATHS /usr/local/bin $ENV{HOME}/.local/bin
     NAMES gcovr
-    OPTIONS ${GCOVR_BRANCH_OPTION} -s -r ${CMAKE_SOURCE_DIR}
+    OPTIONS ${GCOVR_BRANCH_OPTION} -s -r ${CMAKE_SOURCE_DIR} --object-directory ${CMAKE_BINARY_DIR}
     FILES ""
     )
 endfunction()

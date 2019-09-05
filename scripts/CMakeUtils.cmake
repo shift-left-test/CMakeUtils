@@ -177,6 +177,13 @@ function(build_executable)
     "${multiValueArgs}"
     ${ARGN})
 
+  string(TOUPPER "${BUILD_TYPE}" BUILD_TYPE)
+
+  if(BUILD_TYPE STREQUAL "TEST" AND CMAKE_CROSSCOMPILING)
+    message(STATUS "Skipped: ${BUILD_NAME}")
+    return()
+  endif()
+
   add_executable(${BUILD_NAME} ${BUILD_SRCS})
 
   # Accumulate the source files for static analysis
@@ -192,8 +199,6 @@ function(build_executable)
     absolute_paths(CURRENT_HEADERS ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
     add_global_property(ALL_HEADER_DIRS ${CURRENT_HEADERS})
   endif()
-
-  string(TOUPPER "${BUILD_TYPE}" BUILD_TYPE)
 
   if(BUILD_TYPE STREQUAL "TEST")
     find_package(Threads REQUIRED)

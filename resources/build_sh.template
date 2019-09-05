@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cmake . || exit 1
+cmake . -DCMAKE_BUILD_TYPE=Debug || exit 1
 make all -j || exit 1
 make check || exit 1
 make test

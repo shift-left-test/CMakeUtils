@@ -262,6 +262,61 @@ macro(build_test_program)
   build_executable(TYPE test ${ARGN})
 endmacro()
 
+# An helper function to manage header-only interfaces
+function(build_interface)
+  set(oneValueArgs NAME ALIAS)
+  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS CFLAGS CPPFLAGS CXXFLAGS)
+  cmake_parse_arguments(BUILD
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN})
+
+  add_library(${BUILD_NAME} INTERFACE)
+
+  # Accumulate the source files for static analysis
+  absolute_paths(CURRENT_SOURCE_FILES ${BUILD_SRCS})
+  add_global_property(ALL_SOURCE_FILES ${CURRENT_SOURCE_FILES})
+  
+  if(BUILD_PUBLIC_HEADERS OR BUILD_PRIVATE_HEADERS)
+    target_include_directories(${BUILD_NAME}
+      INTERFACE ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
+    
+    # Accumulate the headers for static analysis
+    absolute_paths(CURRENT_HEADERS ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
+    add_global_property(ALL_HEADER_DIRS ${CURRENT_HEADERS})
+  endif()
+
+  install(
+    TARGETS ${BUILD_NAME}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_OLDINCLUDEDIR})
+
+  if(BUILD_ALIAS)
+    add_library(${BUILD_ALIAS}::lib ALIAS ${BUILD_NAME})
+  else()
+    add_library(${BUILD_NAME}::lib ALIAS ${BUILD_NAME})
+  endif()
+
+  if(BUILD_CFLAGS)
+    target_compile_definitions(${BUILD_NAME} INTERFACE ${BUILD_CFLAGS})
+  endif()
+  
+  if(BUILD_CPPFLAGS)
+    target_compile_definitions(${BUILD_NAME} INTERFACE ${BUILD_CPPFLAGS})
+  endif()
+  
+  if(BUILD_CXXFLAGS)
+    target_compile_definitions(${BUILD_NAME} INTERFACE ${BUILD_CXXFLAGS})
+  endif()
+  
+  if(BUILD_LIBS)
+    target_link_libraries(${BUILD_NAME} INTERFACE ${BUILD_LIBS})
+  endif()
+endfunction()
+
 
 function(build_debian_package)
   set(oneValueArgs MAINTAINER CONTACT HOMEPAGE VENDOR DESCRIPTION)

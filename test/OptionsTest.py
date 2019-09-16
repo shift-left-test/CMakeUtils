@@ -27,5 +27,10 @@ class OptionsTest(cmaketest.TestCase):
         assert result.stderr.emptyOf("cmake", "make", "test", "coverage")
         assert result.stdout["coverage"].contains("Branches")
 
+    def testEnableDoxygen(self):
+        result = self.runCMake("test/enable_doxygen")
+        assert result.stderr.emptyOf("cmake", "doc")
+        assert "/html/main_8cpp.html" in result.files()
+
 if __name__ == "__main__":
     unittest.main()

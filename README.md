@@ -9,10 +9,11 @@ A set of CMake macro extensions for a C/C++ project
 - gcc/g++
 - CMake 3.5.0 or above
 - make
+- doxygen
 
 ### How to install prerequisites
 
-    $ sudo apt-get install python cmake build-essential python-pytest
+    $ sudo apt-get install python cmake build-essential python-pytest doxygen graphviz
 
 ### How to run the tests
 
@@ -107,8 +108,8 @@ To enable static analysis checkers (This function call should be located at the 
 # implicitly enable all checkers
 enable_static_analysis(ALL)
 
-# or explicitly enable checkers
-enable_static_analysis(CPPLINT CPPCHECK CLANG-TIDY CLANG-FORMAT)
+# or explicitly enable each checker
+enable_static_analysis(CPPLINT CPPCHECK CLANG-TIDY)
 ```
 
 To enable test coverage report (requires gcovr):

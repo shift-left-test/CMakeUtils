@@ -3,6 +3,7 @@
 cmake . -DCMAKE_BUILD_TYPE=Debug || exit 1
 make all -j || exit 1
 make check || exit 1
+make doc || exit 1
 make test
 make coverage
 make package

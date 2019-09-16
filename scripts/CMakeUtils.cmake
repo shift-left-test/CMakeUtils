@@ -277,11 +277,11 @@ function(build_interface)
   # Accumulate the source files for static analysis
   absolute_paths(CURRENT_SOURCE_FILES ${BUILD_SRCS})
   add_global_property(ALL_SOURCE_FILES ${CURRENT_SOURCE_FILES})
-  
+
   if(BUILD_PUBLIC_HEADERS OR BUILD_PRIVATE_HEADERS)
     target_include_directories(${BUILD_NAME}
       INTERFACE ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
-    
+
     # Accumulate the headers for static analysis
     absolute_paths(CURRENT_HEADERS ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
     add_global_property(ALL_HEADER_DIRS ${CURRENT_HEADERS})
@@ -303,15 +303,15 @@ function(build_interface)
   if(BUILD_CFLAGS)
     target_compile_definitions(${BUILD_NAME} INTERFACE ${BUILD_CFLAGS})
   endif()
-  
+
   if(BUILD_CPPFLAGS)
     target_compile_definitions(${BUILD_NAME} INTERFACE ${BUILD_CPPFLAGS})
   endif()
-  
+
   if(BUILD_CXXFLAGS)
     target_compile_definitions(${BUILD_NAME} INTERFACE ${BUILD_CXXFLAGS})
   endif()
-  
+
   if(BUILD_LIBS)
     target_link_libraries(${BUILD_NAME} INTERFACE ${BUILD_LIBS})
   endif()
@@ -494,5 +494,19 @@ function(enable_test_coverage)
     NAMES gcovr
     OPTIONS ${GCOVR_BRANCH_OPTION} -s -r ${CMAKE_SOURCE_DIR} --object-directory ${CMAKE_BINARY_DIR}
     FILES ""
+    )
+endfunction()
+
+# Enable doxygen
+function(enable_doxygen)
+  find_package(Doxygen REQUIRED)
+
+  configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
+
+  add_custom_target(doc
+    COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_BINARY_DIR}/Doxyfile
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Generating API documentation with Doxygen"
+    VERBATIM
     )
 endfunction()

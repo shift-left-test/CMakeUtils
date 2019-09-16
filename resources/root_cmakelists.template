@@ -28,6 +28,8 @@ set(CMAKE_MODULE_PATH ${{CMAKE_SOURCE_DIR}}/scripts)
 include(CMakeUtils)
 
 set_cxx_standard(11)
+
+enable_doxygen()
 enable_testing()
 enable_test_coverage()
 add_all_subdirectories()

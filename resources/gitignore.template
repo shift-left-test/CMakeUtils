@@ -261,4 +261,10 @@ tags
 # Persistent undo
 [._]*.un~
 
+# Doxygen
+html/
+CMakeDoxyfile.in
+CMakeDoxygenDefaults.cmake
+Doxyfile
+
 # End of https://www.gitignore.io/api/c,vim,c++,gcov,cmake,linux,python

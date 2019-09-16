@@ -25,6 +25,12 @@
 #ifndef INCLUDE_ECHO_ECHO_HPP_
 #define INCLUDE_ECHO_ECHO_HPP_
 
+/**
+ * @brief Echo function
+ *
+ * @param value to echo
+ * @return input value
+ */
 int echo(int value);
 
 #endif  // INCLUDE_ECHO_ECHO_HPP_

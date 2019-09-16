@@ -10,12 +10,14 @@ This is {PROJECT}
 * Google Test Framework
 * gcovr
 * python
+* doxygen
+* graphviz
 * (OPTIONAL) clang-tidy, cppcheck, cpplint
 
 
 ### How to install the required software packages
 
-    $ sudo apt-get install build-essential cmake git python clang-tidy cppcheck libgtest-dev
+    $ sudo apt-get install build-essential cmake git python clang-tidy cppcheck libgtest-dev doxygen graphviz
     & sudo pip install cpplint gcovr
     $ cmake -H/usr/src/gtest -Bbuild
     $ make -C build

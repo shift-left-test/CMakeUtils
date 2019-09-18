@@ -120,6 +120,11 @@ enable_test_coverage()
 enable_test_coverage(BRANCH_COVERAGE)
 ```
 
+To enable doxygen generator:
+```cmake
+enable_doxygen()
+```
+
 ### Licenses
 
 This project source code is available under MIT license. See [LICENSE](LICENSE).

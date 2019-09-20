@@ -13,7 +13,8 @@ A set of CMake macro extensions for a C/C++ project
 
 ### How to install prerequisites
 
-    $ sudo apt-get install python cmake build-essential python-pytest doxygen graphviz
+    $ sudo apt-get install python cmake build-essential python-pip python-pytest doxygen graphviz
+    $ pip install gcovr
 
 ### How to run the tests
 

@@ -320,6 +320,7 @@ endfunction()
 
 function(build_debian_package)
   set(oneValueArgs MAINTAINER CONTACT HOMEPAGE VENDOR DESCRIPTION)
+  set(multiValueArgs DEPENDS)
   cmake_parse_arguments(PKG
     "${options}"
     "${oneValueArgs}"
@@ -369,6 +370,11 @@ function(build_debian_package)
 	OUTPUT_STRIP_TRAILING_WHITESPACE
 	)
     endif()
+  endif()
+
+  if(CPACK_DEPENDS)
+    set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS ${CPACK_DEPENDS})
   endif()
 
   set(CPACK_PACKAGE_FILE_NAME

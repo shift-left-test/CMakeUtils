@@ -34,7 +34,7 @@ class BuildStaticLibraryTest(cmaketest.TestCase):
 
     def testCreateStaticLibWithPrivateHeader(self):
         result = self.runCMake("test/StaticLibWithPrivateHeader")
-        assert result.stderr["make"].contains("internal/a.hpp: No such file or directory")
+        assert result.stderr["make"].contains("fatal error: internal/a.hpp")
         assert "liba.a" in result.files()
         assert not "main" in result.files()
 

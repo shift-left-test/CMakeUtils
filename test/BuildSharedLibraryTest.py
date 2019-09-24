@@ -33,7 +33,8 @@ class BuildSharedLibraryTest(cmaketest.TestCase):
 
     def testCreateSharedLibWithPrivateHeader(self):
         result = self.runCMake("test/SharedLibWithPrivateHeader")
-        assert result.stderr["make"].contains("internal/a.hpp: No such file or directory")
+        print result.stderr["make"]
+        assert result.stderr["make"].contains("fatal error: internal/a.hpp")
         assert "liba.so" in result.files()
         assert not "main" in result.files()
 

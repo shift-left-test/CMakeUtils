@@ -62,29 +62,6 @@ macro(add_all_subdirectories)
   endforeach()
 endmacro()
 
-# Resolve absolute paths of the given files
-function(absolute_paths VARIABLE)
-  set(result "")
-  foreach(path ${ARGN})
-    get_filename_component(newpath ${path} ABSOLUTE BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-    list(APPEND result ${newpath})
-  endforeach()
-  set(${VARIABLE} ${result} PARENT_SCOPE)
-endfunction()
-
-# Prepare variables for static analysis
-set_property(GLOBAL PROPERTY ALL_SOURCE_FILES)
-set_property(GLOBAL PROPERTY ALL_HEADER_DIRS)
-
-# Add global property
-function(add_global_property VARIABLE)
-  get_property(temp GLOBAL PROPERTY ${VARIABLE})
-  foreach(arg ${ARGN})
-    set(temp ${temp} ${arg})
-  endforeach()
-  set_property(GLOBAL PROPERTY ${VARIABLE} ${temp})
-endfunction()
-
 # An helper function to build libraries
 function(build_library)
   set(oneValueArgs TYPE NAME PREFIX SUFFIX VERSION ALIAS)
@@ -98,18 +75,10 @@ function(build_library)
   string(TOUPPER "${BUILD_TYPE}" BUILD_TYPE)
   add_library(${BUILD_NAME} ${BUILD_TYPE} ${BUILD_SRCS})
 
-  # Accumulate the source files for static analysis
-  absolute_paths(CURRENT_SOURCE_FILES ${BUILD_SRCS})
-  add_global_property(ALL_SOURCE_FILES ${CURRENT_SOURCE_FILES})
-
   if(BUILD_PUBLIC_HEADERS OR BUILD_PRIVATE_HEADERS)
     target_include_directories(${BUILD_NAME}
       PUBLIC ${BUILD_PUBLIC_HEADERS}
       PRIVATE ${BUILD_PRIVATE_HEADERS})
-
-    # Accumulate the headers for static analysis
-    absolute_paths(CURRENT_HEADERS ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
-    add_global_property(ALL_HEADER_DIRS ${CURRENT_HEADERS})
   endif()
 
   install(
@@ -186,18 +155,10 @@ function(build_executable)
 
   add_executable(${BUILD_NAME} ${BUILD_SRCS})
 
-  # Accumulate the source files for static analysis
-  absolute_paths(CURRENT_SOURCE_FILES ${BUILD_SRCS})
-  add_global_property(ALL_SOURCE_FILES ${CURRENT_SOURCE_FILES})
-
   if(BUILD_PUBLIC_HEADERS OR BUILD_PRIVATE_HEADERS)
     target_include_directories(${BUILD_NAME}
       PUBLIC ${BUILD_PUBLIC_HEADERS}
       PRIVATE ${BUILD_PRIVATE_HEADERS})
-
-    # Accumulate the headers for static analysis
-    absolute_paths(CURRENT_HEADERS ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
-    add_global_property(ALL_HEADER_DIRS ${CURRENT_HEADERS})
   endif()
 
   if(BUILD_TYPE STREQUAL "TEST")
@@ -274,17 +235,9 @@ function(build_interface)
 
   add_library(${BUILD_NAME} INTERFACE)
 
-  # Accumulate the source files for static analysis
-  absolute_paths(CURRENT_SOURCE_FILES ${BUILD_SRCS})
-  add_global_property(ALL_SOURCE_FILES ${CURRENT_SOURCE_FILES})
-
   if(BUILD_PUBLIC_HEADERS OR BUILD_PRIVATE_HEADERS)
     target_include_directories(${BUILD_NAME}
       INTERFACE ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
-
-    # Accumulate the headers for static analysis
-    absolute_paths(CURRENT_HEADERS ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
-    add_global_property(ALL_HEADER_DIRS ${CURRENT_HEADERS})
   endif()
 
   install(
@@ -405,78 +358,70 @@ function(register_program)
   else()
     message(STATUS "Found ${ARGS_NAME} program: FALSE")
   endif()
-
 endfunction()
 
-# Prepend the given prefix to each of the strings
-function(prepend VARIABLE PREFIX)
-  set(result "")
-  foreach(value ${ARGN})
-    list(APPEND result ${PREFIX}/${value})
-  endforeach()
-  set(${VARIABLE} ${result} PARENT_SCOPE)
-endfunction()
-
-function(find_header_files VARIABLE)
-  set(result "")
-  foreach(directory ${ARGN})
-    file(GLOB_RECURSE foundFiles LIST_DIRECTORIES False "${directory}/*.h" "${directory}/*.hpp")
-    list(APPEND result ${foundFiles})
-  endforeach()
-  set(${VARIABLE} ${result} PARENT_SCOPE)
-endfunction()
-
-
-# Enable the static analysis checkers
-function(enable_static_analysis)
-  set(options ALL CPPLINT CPPCHECK CLANG-TIDY)
-  cmake_parse_arguments(ENABLE
+# Helper for enabling static analysis
+function(register_checker)
+  set(oneValueArgs NAME VERSION)
+  set(multiValueArgs PATHS NAMES OPTIONS)
+  cmake_parse_arguments(ARGS
     "${options}"
     "${oneValueArgs}"
     "${multiValueArgs}"
     ${ARGN})
 
-  add_custom_target(check)
+  set(MESSAGE "Found ${ARGS_NAME} code checker")
 
-  get_property(SOURCE_FILES GLOBAL PROPERTY ALL_SOURCE_FILES)
-  get_property(HEADER_DIRS GLOBAL PROPERTY ALL_HEADER_DIRS)
-
-  find_header_files(HEADER_FILES ${HEADER_DIRS})
-
-  if(ENABLE_ALL OR ENABLE_CLANG-TIDY)
-    register_program(
-      NAME clang-tidy
-      DEPENDS check
-      PATHS /usr/bin
-      NAMES clang-tidy
-      OPTIONS -p=${CMAKE_BINARY_DIR}
-      FILES ${SOURCE_FILES}
-      )
+  if(${CMAKE_VERSION} VERSION_LESS ${ARGS_VERSION})
+    message(STATUS "${MESSAGE}: Unsupported")
+    return()
   endif()
 
-  if(ENABLE_ALL OR ENABLE_CPPLINT)
-    register_program(
-      NAME cpplint
-      DEPENDS check
-      PATHS /usr/local/bin $ENV{HOME}/.local/bin
-      NAMES cpplint
-      OPTIONS --quiet
-      FILES ${HEADER_FILES} ${SOURCE_FILES}
-      )
+  if(NOT ARGS_NAMES)
+    message(STATUS "${MESSAGE}: TRUE")
+    set(CMAKE_CXX_${ARGS_NAME} ON PARENT_SCOPE)
+    return()
   endif()
 
-  if(ENABLE_ALL OR ENABLE_CPPCHECK)
-    prepend(INCLUDE_HEADER_DIRS "-I" ${HEADER_DIRS})
-    register_program(
-      NAME cppcheck
-      DEPENDS check
-      PATHS /usr/bin
-      NAMES cppcheck
-      OPTIONS --enable=all --force --quiet --suppress=missingIncludeSystem ${INCLUDE_HEADER_DIRS}
-      FILES ${HEADER_FILES} ${SOURCE_FILES}
-      )
+  find_program(${ARGS_NAME}_PATH PATHS ${ARGS_PATHS} NAMES ${ARGS_NAMES})
+  if(${ARGS_NAME}_PATH)
+    message(STATUS "${MESSAGE}: TRUE")
+    set(CMAKE_CXX_${ARGS_NAME}
+      ${${ARGS_NAME}_PATH}
+      ${ARGS_OPTIONS}
+      PARENT_SCOPE)
+  else()
+    message(STATUS "${MESSAGE}: FALSE")
   endif()
 endfunction()
+
+# Enable static analysis
+macro(enable_static_analysis)
+  register_checker(
+    NAME CLANG_TIDY
+    NAMES clang-tidy
+    VERSION 3.6.3
+    )
+  register_checker(
+    NAME CPPCHECK
+    NAMES cppcheck
+    VERSION 3.10.0
+    )
+  register_checker(
+    NAME CPPLINT
+    NAMES cpplint cpplint.py
+    VERSION 3.8.2
+    )
+  register_checker(
+    NAME INCLUDE_WHAT_YOU_USE
+    NAMES iwyu
+    VERSION 3.3.2
+    )
+  register_checker(
+    NAME LINK_WHAT_YOU_USE
+    VERSION 3.7.0
+    )
+endmacro()
 
 # Enable gcovr for test coverage
 function(enable_test_coverage)

@@ -1,7 +1,0 @@
-#ifndef TEST_CHECKWITHCPPLINT_LIBB_INCLUDE_B_HPP_
-#define TEST_CHECKWITHCPPLINT_LIBB_INCLUDE_B_HPP_
-
-int multiply(int a, int b);
-int divide(int a, int b);
-
-#endif // TEST_CHECKWITHCPPLINT_LIBB_INCLUDE_B_HPP_

@@ -22,16 +22,19 @@
 
 cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
-project({PROJECT} VERSION 1.0.0)
+project({PROJECT} VERSION 0.1.0)
 
 set(CMAKE_MODULE_PATH ${{CMAKE_SOURCE_DIR}}/scripts)
 include(CMakeUtils)
 
 set_cxx_standard(11)
 
-enable_doxygen()
+enable_static_analysis()
 enable_testing()
 enable_test_coverage()
+
+enable_doxygen()
+
 add_all_subdirectories()
-enable_static_analysis(ALL)
-build_debian_package(MAINTAINER {MAINTAINER})
+
+build_debian_package(MAINTAINER "{MAINTAINER}")

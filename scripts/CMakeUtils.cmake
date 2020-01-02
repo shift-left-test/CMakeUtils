@@ -396,32 +396,49 @@ function(register_checker)
 endfunction()
 
 # Enable static analysis
-macro(enable_static_analysis)
-  register_checker(
-    NAME CLANG_TIDY
-    NAMES clang-tidy
-    VERSION 3.6.3
-    )
-  register_checker(
-    NAME CPPCHECK
-    NAMES cppcheck
-    VERSION 3.10.0
-    )
-  register_checker(
-    NAME CPPLINT
-    NAMES cpplint cpplint.py
-    VERSION 3.8.2
-    )
-  register_checker(
-    NAME INCLUDE_WHAT_YOU_USE
-    NAMES iwyu
-    VERSION 3.3.2
-    )
-  register_checker(
-    NAME LINK_WHAT_YOU_USE
-    VERSION 3.7.0
-    )
-endmacro()
+function(enable_static_analysis)
+  set(options ALL CLANG_TIDY CPPCHECK CPPLINT IWYU LWYU)
+  cmake_parse_arguments(CHECK
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN})
+
+  if(${CHECK_ALL} OR ${CHECK_CLANG_TIDY})
+    register_checker(
+      NAME CLANG_TIDY
+      NAMES clang-tidy
+      VERSION 3.6.3
+      )
+  endif()
+  if(${CHECK_ALL} OR ${CHECK_CPPCHECK})
+    register_checker(
+      NAME CPPCHECK
+      NAMES cppcheck
+      VERSION 3.10.0
+      )
+  endif()
+  if(${CHECK_ALL} OR ${CHECK_CPPLINT})
+    register_checker(
+      NAME CPPLINT
+      NAMES cpplint cpplint.py
+      VERSION 3.8.2
+      )
+  endif()
+  if(${CHECK_ALL} OR ${CHECK_IWYU})
+    register_checker(
+      NAME INCLUDE_WHAT_YOU_USE
+      NAMES iwyu
+      VERSION 3.3.2
+      )
+  endif()
+  if(${CHECK_ALL} OR ${CHECK_LWYU})
+    register_checker(
+      NAME LINK_WHAT_YOU_USE
+      VERSION 3.7.0
+      )
+  endif()
+endfunction()
 
 # Enable gcovr for test coverage
 function(enable_test_coverage)

@@ -8,10 +8,8 @@ This is {PROJECT}
 * C++ compiler (c++11 supported)
 * CMake 3.5.1 or above
 * Google Test Framework
-* gcovr
-* python
-* doxygen
-* graphviz
+* gcovr, python
+* doxygen, graphviz
 * (OPTIONAL) clang-tidy, cppcheck, cpplint
 
 

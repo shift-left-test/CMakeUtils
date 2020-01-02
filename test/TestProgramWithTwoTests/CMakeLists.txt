@@ -15,4 +15,4 @@ build_test_program(
 )
 
 enable_testing()
-enable_static_analysis()
+enable_static_analysis(ALL)

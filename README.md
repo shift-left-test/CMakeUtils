@@ -123,7 +123,7 @@ To enable static analysis checkers (This function call should be located at the 
 enable_static_analysis(ALL)
 
 # or explicitly enable each checker
-enable_static_analysis(CPPLINT CPPCHECK CLANG-TIDY)
+enable_static_analysis(CPPLINT CPPCHECK CLANG-TIDY IWYU LWYU)
 ```
 
 To enable test coverage report (requires gcovr):

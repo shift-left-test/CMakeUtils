@@ -12,4 +12,4 @@ build_test_program(
   SRCS MyTest.cpp
 )
 
-enable_static_analysis(ALL)
+enable_static_analysis()

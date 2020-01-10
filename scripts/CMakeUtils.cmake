@@ -397,39 +397,56 @@ endfunction()
 
 # Enable static analysis
 macro(enable_static_analysis)
-  register_checker(
-    NAME CLANG_TIDY
-    NAMES clang-tidy
-    VERSION 3.6.3
-    )
+  set(options NO_CLANG_TIDY NO_CPPCHECK NO_CPPLINT NO_IWYU NO_LWYU)
+  cmake_parse_arguments(CHECKER
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN})
 
-  register_checker(
-    NAME CPPCHECK
-    NAMES cppcheck
-    VERSION 3.10.0
-    )
+  if(NOT CHECKER_NO_CLANG_TIDY)
+    register_checker(
+      NAME CLANG_TIDY
+      NAMES clang-tidy
+      VERSION 3.6.3
+      )
+  endif()
 
-  register_checker(
-    NAME CPPLINT
-    NAMES cpplint cpplint.py
-    VERSION 3.8.2
-    )
+  if(NOT CHECKER_NO_CPPCHECK)
+    register_checker(
+      NAME CPPCHECK
+      NAMES cppcheck
+      VERSION 3.10.0
+      )
+  endif()
 
-#  register_checker(
-#    NAME INCLUDE_WHAT_YOU_USE
-#    NAMES iwyu
-#    VERSION 3.3.2
-#    )
+  if(NOT CHECKER_NO_CPPLINT)
+    register_checker(
+      NAME CPPLINT
+      NAMES cpplint cpplint.py
+      VERSION 3.8.2
+      )
+  endif()
 
-register_checker(
-  NAME LINK_WHAT_YOU_USE
-  VERSION 3.7.0
-  )
+  if(NOT CHECKER_NO_IWYU)
+    register_checker(
+      NAME INCLUDE_WHAT_YOU_USE
+      NAMES iwyu
+      VERSION 3.3.2
+      )
+  endif()
+
+  if(NOT CHECKER_NO_LWYU)
+    register_checker(
+      NAME LINK_WHAT_YOU_USE
+      VERSION 3.7.0
+      )
+  endif()
 endmacro()
 
 # Enable gcovr for test coverage
 function(enable_test_coverage)
-  set(options BRANCH_COVERAGE)
+  set(options BRANCH)
   cmake_parse_arguments(ENABLE
     "${options}"
     "${oneValueArgs}"
@@ -438,7 +455,7 @@ function(enable_test_coverage)
 
   add_custom_target(coverage)
 
-  if(ENABLE_BRANCH_COVERAGE)
+  if(ENABLE_BRANCH)
     set(GCOVR_BRANCH_OPTION "-b")
   endif()
 

@@ -5,17 +5,17 @@ This is {PROJECT}
 
 ### Requirements
 
-* C++ compiler (c++11 supported)
+* C++ compiler (c++11 or above required)
 * CMake 3.5.1 or above
 * Google Test Framework
 * gcovr, python
 * doxygen, graphviz
-* (OPTIONAL) clang-tidy, cppcheck, cpplint
+* (OPTIONAL) clang-tidy, cppcheck, cpplint, iwyu
 
 
 ### How to install the required software packages
 
-    $ sudo apt-get install build-essential cmake git python clang-tidy cppcheck libgtest-dev doxygen graphviz
+    $ sudo apt-get install build-essential cmake git python clang-tidy cppcheck iwyu libgtest-dev doxygen graphviz
     & sudo pip install cpplint gcovr
     $ cmake -H/usr/src/gtest -Bbuild
     $ make -C build

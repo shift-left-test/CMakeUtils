@@ -5,7 +5,7 @@ project(test)
 include(CMakeUtils)
 
 enable_testing()
-enable_test_coverage(BRANCH_COVERAGE)
+enable_test_coverage(BRANCH)
 
 build_test_program(
   NAME MyTest

@@ -7,7 +7,7 @@ A set of CMake macro extensions for a C/C++ project
 - python 2.7 or above
 - pytest
 - gcc/g++
-- CMake 3.5.0 or above
+- CMake 3.5.1 or above
 - make
 - doxygen
 
@@ -122,12 +122,17 @@ To enable static analysis checkers (This function call should be located at the 
 enable_static_analysis()
 ```
 
+All of the static checkers are enabled by default, however you can disable specific checkers by using the 'NO_***' keywords as below:
+```cmake
+enable_static_analysis(NO_CLANG_TIDY NO_CPPCHECK NO_CPPLINT NO_IWYU NO_LWYU)
+```
+
 To enable test coverage report (requires gcovr):
 ```cmake
 enable_test_coverage()
 
 # or for branch coverage
-enable_test_coverage(BRANCH_COVERAGE)
+enable_test_coverage(BRANCH)
 ```
 
 To enable doxygen generator:

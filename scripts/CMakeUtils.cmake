@@ -417,6 +417,7 @@ macro(enable_static_analysis)
       NAME CPPCHECK
       NAMES cppcheck
       VERSION 3.10.0
+      OPTIONS --enable=warning,style,performance,portability
       )
   endif()
 

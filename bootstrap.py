@@ -105,6 +105,7 @@ if __name__ == "__main__":
         templates["CMakeLists.txt"] = readFile("resources/root_cmakelists.template")
         templates["build.sh"] = readFile("resources/build_sh.template")
         templates["CPPLINT.cfg"] = readFile("resources/cpplint.template")
+        templates[".clang-tidy"] = readFile("resources/clang-tidy.template")
         templates["Doxyfile.in"] = readFile("resources/doxyfile.in.template")
         templates["include/echo/echo.hpp"] = readFile("resources/echo_hpp.template")
         templates["src/echo.cpp"] = readFile("resources/echo_cpp.template")

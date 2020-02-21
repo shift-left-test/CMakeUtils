@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     try:
         writeFile(to("scripts/CMakeUtils.cmake"), readFile("scripts/CMakeUtils.cmake"))
-
+        writeFile(to("scripts/FindGMock.cmake"), readFile("scripts/FindGMock.cmake"))
         templates = {}
         templates[".gitignore"] = readFile("resources/gitignore.template")
         templates["LICENSE"] = readFile("resources/license.template")

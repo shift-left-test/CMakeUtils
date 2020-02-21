@@ -148,11 +148,6 @@ function(build_executable)
 
   string(TOUPPER "${BUILD_TYPE}" BUILD_TYPE)
 
-  if(BUILD_TYPE STREQUAL "TEST" AND CMAKE_CROSSCOMPILING)
-    message(STATUS "Skipped: ${BUILD_NAME}")
-    return()
-  endif()
-
   add_executable(${BUILD_NAME} ${BUILD_SRCS})
 
   if(BUILD_PUBLIC_HEADERS OR BUILD_PRIVATE_HEADERS)
@@ -164,6 +159,7 @@ function(build_executable)
   if(BUILD_TYPE STREQUAL "TEST")
     find_package(Threads REQUIRED)
     find_package(GTest REQUIRED)
+    find_package(GMock REQUIRED)
 
     set_target_properties(${BUILD_NAME} PROPERTIES
       CXX_STANDARD 11
@@ -171,9 +167,10 @@ function(build_executable)
       CXX_EXTENSIONS OFF
     )
 
-    target_include_directories(${BUILD_NAME} PRIVATE ${GTEST_INCLUDE_DIRS})
+    target_include_directories(${BUILD_NAME}
+      PRIVATE ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS})
     target_link_libraries(${BUILD_NAME}
-      PRIVATE ${GTEST_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+      PRIVATE ${GTEST_LIBRARIES} ${GMOCK_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
     gtest_add_tests(${BUILD_NAME} "" AUTO)
   else()
     install(

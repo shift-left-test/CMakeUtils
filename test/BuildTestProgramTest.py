@@ -26,9 +26,5 @@ class BuildTestProgramTest(cmaketest.TestCase):
         assert result.stdout["test"].contains("1/2 Test #1: FirstTest.test1")
         assert result.stdout["test"].contains("2/2 Test #2: SecondTest.test1")
 
-    def testCreateTestProgramIgnoredWhenCrossCompiling(self):
-        result = self.runCMake("test/TestProgramIgnoredWhenCrossCompiling")
-        assert result.stderr["test"].contains("No tests were found")
-
 if __name__ == "__main__":
     unittest.main()

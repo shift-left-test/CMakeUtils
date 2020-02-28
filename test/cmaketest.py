@@ -201,7 +201,7 @@ class CMakeTestUtil(object):
 
         result = BuildResult(tempDir)
         result.append("cmake", execute("cmake -H{0} -B{1} -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)))
-        result.append("make", execute("make all -C {0}".format(tempDir)))
+        result.append("make", execute("make all -C {0} VERBOSE=1".format(tempDir)))
         result.append("check", execute("make check -C {0}".format(tempDir)))
         result.append("test", execute("make test -C {0}".format(tempDir)))
         result.append("coverage", execute("make coverage -C {0}".format(tempDir)))

@@ -38,5 +38,10 @@ class OptionsTest(cmaketest.TestCase):
         assert "-Wall" in result.compile.commandOf("main.cpp")
         assert "-Wall" in result.compile.commandOf("plus.cpp")
 
+    def testLinkOptions(self):
+        result = self.runCMake("test/link_options")
+        assert result.stderr.emptyOf("cmake", "make")
+        assert result.stdout["make"].contains("-L/test-path")
+
 if __name__ == "__main__":
     unittest.main()

@@ -65,7 +65,7 @@ endmacro()
 # An helper function to build libraries
 function(build_library)
   set(oneValueArgs TYPE NAME PREFIX SUFFIX VERSION ALIAS)
-  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS CFLAGS CPPFLAGS CXXFLAGS COMPILE_OPTIONS)
+  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS CFLAGS CPPFLAGS CXXFLAGS COMPILE_OPTIONS LINK_OPTIONS)
   cmake_parse_arguments(BUILD
     "${options}"
     "${oneValueArgs}"
@@ -126,6 +126,10 @@ function(build_library)
     target_compile_options(${BUILD_NAME} PRIVATE ${BUILD_COMPILE_OPTIONS})
   endif()
 
+  if(BUILD_LINK_OPTIONS)
+    set_property(TARGET ${BUILD_NAME} APPEND_STRING PROPERTY LINK_FLAGS " ${BUILD_LINK_OPTIONS}")
+  endif()
+
   if(BUILD_LIBS)
     target_link_libraries(${BUILD_NAME} PUBLIC ${BUILD_LIBS})
   endif()
@@ -143,7 +147,7 @@ endmacro(build_static_library)
 # An helper function to build executables
 function(build_executable)
   set(oneValueArgs TYPE NAME PREFIX SUFFIX VERSION ALIAS)
-  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS CFLAGS CPPFLAGS CXXFLAGS COMPILE_OPTIONS)
+  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS CFLAGS CPPFLAGS CXXFLAGS COMPILE_OPTIONS LINK_OPTIONS)
   cmake_parse_arguments(BUILD
     "${options}"
     "${oneValueArgs}"
@@ -214,6 +218,10 @@ function(build_executable)
     target_compile_options(${BUILD_NAME} PRIVATE ${BUILD_COMPILE_OPTIONS})
   endif()
 
+  if(BUILD_LINK_OPTIONS)
+    set_property(TARGET ${BUILD_NAME} APPEND_STRING PROPERTY LINK_FLAGS " ${BUILD_LINK_OPTIONS}")
+  endif()
+
   if(BUILD_LIBS)
     target_link_libraries(${BUILD_NAME} PUBLIC ${BUILD_LIBS})
   endif()
@@ -231,7 +239,7 @@ endmacro()
 # An helper function to manage header-only interfaces
 function(build_interface)
   set(oneValueArgs NAME ALIAS)
-  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS CFLAGS CPPFLAGS CXXFLAGS COMPILE_OPTIONS)
+  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS CFLAGS CPPFLAGS CXXFLAGS COMPILE_OPTIONS LINK_OPTIONS)
   cmake_parse_arguments(BUILD
     "${options}"
     "${oneValueArgs}"
@@ -271,7 +279,11 @@ function(build_interface)
   endif()
 
   if(BUILD_COMPILE_OPTIONS)
-    target_compile_options(${BUILD_NAME} INTERFACE ${BUILD_COMPILE_OPTIONS})
+    target_compile_options(${BUILD_NAME} PRIVATE ${BUILD_COMPILE_OPTIONS})
+  endif()
+
+  if(BUILD_LINK_OPTIONS)
+    set_property(TARGET ${BUILD_NAME} APPEND_STRING PROPERTY LINK_FLAGS " ${BUILD_LINK_OPTIONS}")
   endif()
 
   if(BUILD_LIBS)

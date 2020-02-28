@@ -2,6 +2,7 @@
 
 A set of CMake macro extensions for a C/C++ project
 
+
 ### Requiurements
 
 - python 2.7 or above
@@ -11,14 +12,24 @@ A set of CMake macro extensions for a C/C++ project
 - make
 - doxygen
 
+
 ### How to install prerequisites
 
     $ sudo apt-get install python cmake build-essential python-pip python-pytest doxygen graphviz
     $ pip install gcovr
 
+
 ### How to run the tests
 
     $ ./runtest.sh
+
+
+### How to configure CMakeLists.txt files under the test directory
+
+You may run the following command at the top-level directory
+
+    $ cmake -S . -B <directory> -DCMAKE_MODULE_PATH=`pwd`/scripts
+
 
 ### How to create new predefined C++ project
 
@@ -139,6 +150,7 @@ To enable doxygen generator:
 ```cmake
 enable_doxygen()
 ```
+
 
 ### Licenses
 

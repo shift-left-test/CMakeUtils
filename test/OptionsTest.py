@@ -32,5 +32,11 @@ class OptionsTest(cmaketest.TestCase):
         assert result.stderr.emptyOf("cmake", "doc")
         assert "/html/main_8cpp.html" in result.files()
 
+    def testCompileOptions(self):
+        result = self.runCMake("test/compile_options")
+        assert result.stderr.emptyOf("cmake", "make")
+        assert "-Wall" in result.compile.commandOf("main.cpp")
+        assert "-Wall" in result.compile.commandOf("plus.cpp")
+
 if __name__ == "__main__":
     unittest.main()

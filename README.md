@@ -52,6 +52,8 @@ build_program(
   CFLAGS <list of C compilation flags>
   CPPFLAGS <list of pre-processing flags>
   CXXFLAGS <list of CXX compilation flags>
+  COMPILE_OPTIONS <list of compilation flags>
+  LINK_OPTIONS <list of linker flags>
 )
 ```
 
@@ -68,6 +70,8 @@ build_static_library(
   CFLAGS <list of C compilation flags>
   CPPFLAGS <list of pre-processing flags>
   CXXFLAGS <list of CXX compilation flags>
+  COMPILE_OPTIONS <list of compilation flags>
+  LINK_OPTIONS <list of linker flags>
 )
 ```
 
@@ -85,6 +89,8 @@ build_shared_library(
   CFLAGS <list of C compilation flags>
   CPPFLAGS <list of pre-processing flags>
   CXXFLAGS <list of CXX compilation flags>
+  COMPILE_OPTIONS <list of compilation flags>
+  LINK_OPTIONS <list of linker flags>
 )
 ```
 
@@ -98,6 +104,8 @@ build_interface(
   CFLAGS <list of C compilation flags>
   CPPFLAGS <list of pre-processing flags>
   CXXFLAGS <list of CXX compilation flags>
+  COMPILE_OPTIONS <list of compilation flags>
+  LINK_OPTIONS <list of linker flags>
 )
 ```
 
@@ -114,6 +122,8 @@ build_test_program(
   CFLAGS <list of C compilation flags>
   CPPFLAGS <list of pre-processing flags>
   CXXFLAGS <list of CXX compilation flags>
+  COMPILE_OPTIONS <list of compilation flags>
+  LINK_OPTIONS <list of linker flags>
 )
 ```
 

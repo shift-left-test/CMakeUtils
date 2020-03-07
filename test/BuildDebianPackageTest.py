@@ -24,7 +24,7 @@ class BuildDebianPackageTest(cmaketest.TestCase):
         assert result.exists("test-1.0.0-amd64.deb")
         assert result.exists("_CPack_Packages/Linux/DEB/test-1.0.0-amd64/usr/lib/libmodule.a")
         assert result.exists("test/unittest.out")
-        assert not result.exists("_CPack_Packages/Linux/DEB/test-1.0.0-amd64/usr/bin/unittest.out")
+        assert not result.exists("_CPack_Packages/Linux/DEB/test-1.0.0-amd64/usr/bin/unittest")
 
 if __name__ == "__main__":
     unittest.main()

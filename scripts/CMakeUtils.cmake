@@ -36,10 +36,6 @@ include(GNUInstallDirs)
 # Save the compile commands as a file
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Set default installation directory for tests
-set(CMAKE_INSTALL_TESTDIR "${CMAKE_INSTALL_PREFIX}/opt/tests" CACHE
-  STRING "Installation directory for tests")
-
 # Set debug as the default build type
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
   message(STATUS "Build Type: Debug (default)")
@@ -194,15 +190,11 @@ function(build_executable)
     target_link_libraries(${BUILD_NAME}
       PRIVATE GTest::GTest GMock::GMock GMock::Main ${CMAKE_THREAD_LIBS_INIT})
     gtest_add_tests(${BUILD_NAME} "" AUTO)
+  endif()
 
     install(
       TARGETS ${BUILD_NAME}
-      RUNTIME DESTINATION ${CMAKE_INSTALL_TESTDIR})
-  else()
-    install(
-      TARGETS ${BUILD_NAME}
       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-  endif()
 
   if(BUILD_PREFIX)
     set_target_properties(${BUILD_NAME} PROPERTIES PREFIX ${BUILD_PREFIX})

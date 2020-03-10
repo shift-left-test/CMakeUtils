@@ -43,5 +43,11 @@ class OptionsTest(cmaketest.TestCase):
         assert result.stderr.emptyOf("cmake", "make")
         assert result.stdout["make"].contains("-L/test-path")
 
+    def testCrossCompilingEmulatorOptions(self):
+        result = self.runCMake("test/CrossCompilingEmulatorOption")
+        assert result.stdout["cmake"].contains("Found cross-compiling emulator: TRUE")
+        assert result.stderr.emptyOf("cmake", "make")
+        assert result.stderr["test"].contains("Unable to find executable: qemu-unknown")
+
 if __name__ == "__main__":
     unittest.main()

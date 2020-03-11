@@ -55,7 +55,7 @@ else()
 endif()
 
 # Set the default installation directory for tests
-set(CMAKE_INSTALL_TESTDIR "opt/tests" CACHE STRING "Default installation directory for tests")
+set(CMAKE_INSTALL_TESTDIR "tests" CACHE STRING "Default installation directory for tests")
 
 # Set code coverage options to the default flags
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g -fprofile-arcs -ftest-coverage")

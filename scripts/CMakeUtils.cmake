@@ -44,6 +44,11 @@ else()
   message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 endif()
 
+# Set sysroot if avaiable
+if(DEFINED ENV{OECORE_TARGET_SYSROOT})
+  set(CMAKE_SYSROOT $ENV{OECORE_TARGET_SYSROOT})
+endif()
+
 # Set cross-compiling emulator if available
 if(DEFINED CMAKE_CROSSCOMPILING_EMULATOR)
   message(STATUS "Found cross-compiling emulator: TRUE")

@@ -23,11 +23,11 @@
 cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
 
 # Prevent from multiple inclusion
-if(DEFINED CMAKE_UTILS_INCLUDED)
+if(DEFINED CMAKEUTILS_INCLUDED)
   return()
 endif()
 
-set(CMAKE_UTILS_INCLUDED ON)
+set(CMAKEUTILS_INCLUDED ON)
 
 
 include(CMakeParseArguments)
@@ -198,7 +198,7 @@ function(build_executable)
     find_package(GMock REQUIRED)
 
     set_target_properties(${BUILD_NAME} PROPERTIES
-      CXX_STANDARD 11
+      CXX_STANDARD 14
       CXX_STANDARD_REQUIRED ON
       CXX_EXTENSIONS OFF
     )

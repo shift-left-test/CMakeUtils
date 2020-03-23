@@ -10,7 +10,7 @@ class BuildStaticLibraryTest(cmaketest.TestCase):
         assert result.stderr.emptyOf("cmake", "make")
         assert "liba.a" in result.files()
         assert result.stdout["cmake"].contains("Build Type: Debug")
-        assert "-O0 -g -fprofile-arcs -ftest-coverage" in result.compile.commandOf("a.cpp")
+        assert "-g -fprofile-arcs -ftest-coverage" in result.compile.commandOf("a.cpp")
 
     def testCreateShraedLibWithReleaseMode(self):
         result = self.runCMake("test/StaticLibWithReleaseMode")

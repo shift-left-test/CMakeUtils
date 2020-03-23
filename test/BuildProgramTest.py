@@ -16,7 +16,6 @@ class BuildProgramTest(cmaketest.TestCase):
         result = self.runCMake("test/ProgramWithReleaseMode")
         assert result.stderr.emptyOf("cmake", "make")
         assert "main" in result.files()
-        assert result.stdout["cmake"].contains("Build Type: Release")
         assert "-O3 -DNDEBUG" in result.compile.commandOf("main.cpp")
 
     def testCreateProgramWithNamingOptions(self):

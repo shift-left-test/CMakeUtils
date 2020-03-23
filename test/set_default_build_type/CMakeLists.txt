@@ -4,7 +4,7 @@ project(test)
 
 include(CMakeUtils)
 
-set_default_build_type(Debug)
+set_default_build_type(DebugWithRelInfo)
 
 build_program(
   NAME main

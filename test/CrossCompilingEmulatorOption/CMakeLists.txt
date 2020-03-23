@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 3.5)
 
 project(test)
 
-set(CMAKE_BUILD_TYPE Debug)
-
 # Enforce the option
 set(CMAKE_CROSSCOMPILING_EMULATOR "qemu-unknown")
 
 include(CMakeUtils)
+
+set_default_build_type(Debug)
 
 build_test_program(
   NAME MyTest

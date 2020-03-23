@@ -16,7 +16,6 @@ class BuildSharedLibraryTest(cmaketest.TestCase):
         result = self.runCMake("test/SharedLibWithReleaseMode")
         assert result.stderr.emptyOf("cmake", "make")
         assert "liba.so" in result.files()
-        assert result.stdout["cmake"].contains("Build Type: Release")
         assert "-O3 -DNDEBUG" in result.compile.commandOf("a.cpp")
 
     def testCreateSharedLibWithNamingOptions(self):

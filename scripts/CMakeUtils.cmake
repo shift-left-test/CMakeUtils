@@ -32,8 +32,6 @@ set(CMAKEUTILS_INCLUDED ON)
 include(CMakeParseArguments)
 include(GNUInstallDirs)
 
-message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
-
 # Save the compile commands as a file
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -53,11 +51,19 @@ else()
 endif()
 
 # Set the default installation directory for tests
-set(CMAKE_INSTALL_TESTDIR "tests" CACHE STRING "Default installation directory for tests")
+set(CMAKE_INSTALL_TESTDIR "tests" CACHE PATH "Default installation directory for tests")
 
 # Set code coverage options to the default flags
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g -fprofile-arcs -ftest-coverage")
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g -fprofile-arcs -ftest-coverage")
+
+# Set the default build type
+macro(set_default_build_type BUILD_TYPE)
+  if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE ${BUILD_TYPE})
+  endif()
+  message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+endmacro()
 
 # Macro to set C standard flags
 macro(set_c_standard VERSION)

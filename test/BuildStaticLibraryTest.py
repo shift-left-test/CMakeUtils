@@ -16,7 +16,6 @@ class BuildStaticLibraryTest(cmaketest.TestCase):
         result = self.runCMake("test/StaticLibWithReleaseMode")
         assert result.stderr.emptyOf("cmake", "make")
         assert "liba.a" in result.files()
-        assert result.stdout["cmake"].contains("Build Type: Release")
         assert "-O3 -DNDEBUG" in result.compile.commandOf("a.cpp")
 
     def testCreateStaticLibWithNamingOptions(self):

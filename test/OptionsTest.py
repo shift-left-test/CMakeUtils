@@ -17,6 +17,11 @@ class OptionsTest(cmaketest.TestCase):
         assert "main" in result.files()
         assert "-std=c++11" in result.compile.commandOf("main.cpp")
 
+    def testSetDefaultBuildType(self):
+        result = self.runCMake("test/set_default_build_type")
+        assert result.stderr.emptyOf("cmake", "make")
+        assert result.stdout["cmake"].contains("Build Type: DebugWithRelInfo")
+
     def testAddAllSubDirectories(self):
         result = self.runCMake("test/add_all_subdirectories")
         assert result.stderr.emptyOf("cmake", "make")
@@ -48,6 +53,7 @@ class OptionsTest(cmaketest.TestCase):
         assert result.stdout["cmake"].contains("Found cross-compiling emulator: TRUE")
         assert result.stderr.emptyOf("cmake", "make")
         assert result.stderr["test"].contains("Unable to find executable: qemu-unknown")
+
 
 if __name__ == "__main__":
     unittest.main()

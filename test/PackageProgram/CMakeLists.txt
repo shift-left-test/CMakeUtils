@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.5)
 
 project(test VERSION 0.0.1)
 
-set(CMAKE_BUILD_TYPE Debug)
-
 include(CMakeUtils)
+
+set_default_build_type(Debug)
 
 build_program(
   NAME main

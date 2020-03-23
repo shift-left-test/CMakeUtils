@@ -29,20 +29,13 @@ endif()
 
 set(CMAKEUTILS_INCLUDED ON)
 
-
 include(CMakeParseArguments)
 include(GNUInstallDirs)
 
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+
 # Save the compile commands as a file
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Set debug as the default build type
-if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
-  message(STATUS "Build Type: Debug (default)")
-  set(CMAKE_BUILD_TYPE Debug)
-else()
-  message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
-endif()
 
 # Set sysroot if avaiable
 if(DEFINED ENV{OECORE_TARGET_SYSROOT})

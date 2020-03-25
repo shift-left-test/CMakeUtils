@@ -40,14 +40,11 @@ if(DEFINED ENV{OECORE_TARGET_SYSROOT})
   set(CMAKE_SYSROOT $ENV{OECORE_TARGET_SYSROOT})
 endif()
 
-# Set cross-compiling emulator if available
+# Show cross-compiling emulator if available
 if(DEFINED CMAKE_CROSSCOMPILING_EMULATOR)
   message(STATUS "Found cross-compiling emulator: TRUE")
 else()
-  if(DEFINED ENV{CROSSCOMPILING_EMULATOR} AND DEFINED ENV{SDKTARGETSYSROOT})
-    message(STATUS "Found cross-compiling emulator: TRUE")
-    set(CMAKE_CROSSCOMPILING_EMULATOR "$ENV{CROSSCOMPILING_EMULATOR};-L;$ENV{SDKTARGETSYSROOT}")
-  endif()
+  message(STATUS "Found cross-compiling emulator: FALSE")
 endif()
 
 # Set the default installation directory for tests

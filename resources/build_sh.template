@@ -22,7 +22,7 @@
 
 #!/bin/bash
 
-cmake . -DENABLE_TESTS=ON || exit 1
+cmake . || exit 1
 make all -j || exit 1
 make doc || exit 1
 ctest --output-on-failure

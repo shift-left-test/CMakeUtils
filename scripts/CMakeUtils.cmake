@@ -35,11 +35,6 @@ include(GNUInstallDirs)
 # Save the compile commands as a file
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Do not enable tests by default
-option(ENABLE_TESTS "Enable tests" OFF)
-
-message(STATUS "Enable tests: ${ENABLE_TESTS}")
-
 # Set sysroot if avaiable
 if(DEFINED ENV{OECORE_TARGET_SYSROOT})
   set(CMAKE_SYSROOT $ENV{OECORE_TARGET_SYSROOT})
@@ -57,12 +52,6 @@ endif()
 
 # Set the default installation directory for tests
 set(CMAKE_INSTALL_TESTDIR "tests" CACHE PATH "Default installation directory for tests")
-
-# Set code coverage flags when needed
-if(ENABLE_TESTS)
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -fprofile-arcs -ftest-coverage")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
-endif()
 
 # Set the default build type
 macro(set_default_build_type BUILD_TYPE)
@@ -271,9 +260,7 @@ macro(build_program)
 endmacro()
 
 macro(build_test_program)
-  if(ENABLE_TESTS)
-    build_executable(TYPE test ${ARGN})
-  endif()
+  build_executable(TYPE test ${ARGN})
 endmacro()
 
 # An helper function to manage header-only interfaces
@@ -458,53 +445,51 @@ endfunction()
 
 # Enable static analysis
 macro(enable_static_analysis)
-  if(ENABLE_TESTS)
-    set(options NO_CLANG_TIDY NO_CPPCHECK NO_CPPLINT NO_IWYU NO_LWYU)
-    cmake_parse_arguments(CHECKER
-      "${options}"
-      "${oneValueArgs}"
-      "${multiValueArgs}"
-      ${ARGN})
+  set(options NO_CLANG_TIDY NO_CPPCHECK NO_CPPLINT NO_IWYU NO_LWYU)
+  cmake_parse_arguments(CHECKER
+    "${options}"
+    "${oneValueArgs}"
+    "${multiValueArgs}"
+    ${ARGN})
 
-    if(NOT CHECKER_NO_CLANG_TIDY)
-      register_checker(
-	NAME CLANG_TIDY
-	NAMES clang-tidy
-	VERSION 3.6.3
-	)
-    endif()
+  if(NOT CHECKER_NO_CLANG_TIDY)
+    register_checker(
+      NAME CLANG_TIDY
+      NAMES clang-tidy
+      VERSION 3.6.3
+      )
+  endif()
 
-    if(NOT CHECKER_NO_CPPCHECK)
-      register_checker(
-	NAME CPPCHECK
-	NAMES cppcheck
-	VERSION 3.10.0
-	OPTIONS --enable=warning,style,performance,portability
-	)
-    endif()
+  if(NOT CHECKER_NO_CPPCHECK)
+    register_checker(
+      NAME CPPCHECK
+      NAMES cppcheck
+      VERSION 3.10.0
+      OPTIONS --enable=warning,style,performance,portability
+      )
+  endif()
 
-    if(NOT CHECKER_NO_CPPLINT)
-      register_checker(
-	NAME CPPLINT
-	NAMES cpplint cpplint.py
-	VERSION 3.8.2
-	)
-    endif()
+  if(NOT CHECKER_NO_CPPLINT)
+    register_checker(
+      NAME CPPLINT
+      NAMES cpplint cpplint.py
+      VERSION 3.8.2
+      )
+  endif()
 
-    if(NOT CHECKER_NO_IWYU)
-      register_checker(
-	NAME INCLUDE_WHAT_YOU_USE
-	NAMES iwyu
-	VERSION 3.3.2
-	)
-    endif()
+  if(NOT CHECKER_NO_IWYU)
+    register_checker(
+      NAME INCLUDE_WHAT_YOU_USE
+      NAMES iwyu
+      VERSION 3.3.2
+      )
+  endif()
 
-    if(NOT CHECKER_NO_LWYU)
-      register_checker(
-	NAME LINK_WHAT_YOU_USE
-	VERSION 3.7.0
-	)
-    endif()
+  if(NOT CHECKER_NO_LWYU)
+    register_checker(
+      NAME LINK_WHAT_YOU_USE
+      VERSION 3.7.0
+      )
   endif()
 endmacro()
 
@@ -512,9 +497,9 @@ endmacro()
 function(enable_test_coverage)
   add_custom_target(coverage)
 
-  if(NOT ENABLE_TESTS)
-    return()
-  endif()
+  # Set code coverage flags
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage" PARENT_SCOPE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage" PARENT_SCOPE)
 
   set(options BRANCH)
   cmake_parse_arguments(ENABLE

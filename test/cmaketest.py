@@ -200,7 +200,7 @@ class CMakeTestUtil(object):
         cmakeDir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "scripts")
 
         result = BuildResult(tempDir)
-        result.append("cmake", execute("cmake -H{0} -B{1} -DENABLE_TESTS=ON -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)))
+        result.append("cmake", execute("cmake -H{0} -B{1} -DCMAKE_MODULE_PATH={2}".format(sourceDir, tempDir, cmakeDir)))
         result.append("make", execute("make all -C {0} VERBOSE=1".format(tempDir)))
         result.append("check", execute("make check -C {0}".format(tempDir)))
         result.append("test", execute("make test -C {0}".format(tempDir)))

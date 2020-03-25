@@ -10,7 +10,6 @@ class BuildProgramTest(cmaketest.TestCase):
         assert result.stderr.emptyOf("cmake", "make")
         assert "main" in result.files()
         assert result.stdout["cmake"].contains("Build Type: Debug")
-        assert "-g -fprofile-arcs -ftest-coverage" in result.compile.commandOf("main.cpp")
 
     def testCreateProgramWithReleaseMode(self):
         result = self.runCMake("test/ProgramWithReleaseMode")

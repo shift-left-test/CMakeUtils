@@ -82,20 +82,10 @@ macro(add_all_subdirectories)
   endforeach()
 endmacro()
 
-# An helper functino to find all header files
-function(find_header_files VARIABLE)
-  set(result "")
-  foreach(directory ${ARGN})
-    file(GLOB_RECURSE foundFiles LIST_DIRECTORIES False "${directory}/*.h" "${directory}/*.hpp")
-    list(APPEND result ${foundFiles})
-  endforeach()
-  set(${VARIABLE} ${result} PARENT_SCOPE)
-endfunction()
-
 # An helper function to build libraries
 function(build_library)
   set(oneValueArgs TYPE NAME PREFIX SUFFIX VERSION ALIAS)
-  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS CFLAGS CPPFLAGS CXXFLAGS COMPILE_OPTIONS LINK_OPTIONS)
+  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS INSTALL_HEADERS CFLAGS CPPFLAGS CXXFLAGS COMPILE_OPTIONS LINK_OPTIONS)
   cmake_parse_arguments(BUILD
     "${options}"
     "${oneValueArgs}"
@@ -111,17 +101,17 @@ function(build_library)
       PRIVATE ${BUILD_PRIVATE_HEADERS})
   endif()
 
-  if(BUILD_PUBLIC_HEADERS)
-    find_header_files(HEADER_FILES ${BUILD_PUBLIC_HEADERS})
-    set_target_properties(${BUILD_NAME} PROPERTIES PUBLIC_HEADER ${HEADER_FILES})
+  if(BUILD_INSTALL_HEADERS)
+    foreach(dir ${BUILD_INSTALL_HEADERS})
+      install(DIRECTORY ${dir} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    endforeach()
   endif()
 
   install(
     TARGETS ${BUILD_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${BUILD_NAME})
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
   if(BUILD_ALIAS)
     add_library(${BUILD_ALIAS}::lib ALIAS ${BUILD_NAME})
@@ -278,7 +268,7 @@ endmacro()
 # An helper function to manage header-only interfaces
 function(build_interface)
   set(oneValueArgs NAME ALIAS)
-  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS CFLAGS CPPFLAGS CXXFLAGS COMPILE_OPTIONS LINK_OPTIONS)
+  set(multiValueArgs SRCS LIBS PUBLIC_HEADERS PRIVATE_HEADERS INSTALL_HEADERS CFLAGS CPPFLAGS CXXFLAGS COMPILE_OPTIONS LINK_OPTIONS)
   cmake_parse_arguments(BUILD
     "${options}"
     "${oneValueArgs}"
@@ -292,12 +282,17 @@ function(build_interface)
       INTERFACE ${BUILD_PUBLIC_HEADERS} ${BUILD_PRIVATE_HEADERS})
   endif()
 
+  if(BUILD_INSTALL_HEADERS)
+    foreach(dir ${BUILD_INSTALL_HEADERS})
+      install(DIRECTORY ${dir} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+    endforeach()
+  endif()
+
   install(
     TARGETS ${BUILD_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${BUILD_NAME})
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
   if(BUILD_ALIAS)
     add_library(${BUILD_ALIAS}::lib ALIAS ${BUILD_NAME})

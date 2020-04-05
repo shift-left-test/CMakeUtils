@@ -206,7 +206,7 @@ class CMakeTestUtil(object):
         result.append("test", execute("make test -C {0}".format(tempDir)))
         result.append("coverage", execute("make coverage -C {0}".format(tempDir)))
         result.append("package", execute("make package -C {0}".format(tempDir)))
-        result.append("doc", execute("make doc -C {0}".format(tempDir)))
+        result.append("docs", execute("make docs -C {0}".format(tempDir)))
         return result
 
 

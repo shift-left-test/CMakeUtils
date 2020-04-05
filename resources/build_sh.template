@@ -1,3 +1,4 @@
+
 # MIT License
 #
 # Copyright (c) 2019 Sung Gon Kim
@@ -24,7 +25,7 @@
 
 cmake . || exit 1
 make all -j || exit 1
-make doc || exit 1
+make docs || exit 1
 ctest --output-on-failure
 make coverage
 make package

@@ -34,7 +34,7 @@ class OptionsTest(cmaketest.TestCase):
 
     def testEnableDoxygen(self):
         result = self.runCMake("test/enable_doxygen")
-        assert result.stderr.emptyOf("cmake", "docs")
+        assert result.stderr.emptyOf("cmake", "doc")
         assert "/html/main_8cpp.html" in result.files()
 
     def testCompileOptions(self):

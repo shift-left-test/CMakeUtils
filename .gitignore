@@ -308,3 +308,5 @@ result.xml
 *.deb
 
 # End of https://www.gitignore.io/api/c,vim,c++,cmake,linux,emacs,python
+
+test/enable_doxygen/Doxyfile

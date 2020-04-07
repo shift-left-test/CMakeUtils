@@ -6,6 +6,8 @@ include(CMakeUtils)
 
 set_default_build_type(Debug)
 
+configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile @ONLY)
+
 enable_doxygen()
 
 build_program(

@@ -22,7 +22,7 @@
 
 cmake_minimum_required(VERSION 3.5.1)
 
-project(CMakeUtils VERSION NONE)
+project(CMakeUtils NONE)
 
 # Install the scripts into the currently running cmake Modules directory
 install(FILES scripts/CMakeUtils.cmake DESTINATION ${CMAKE_ROOT}/Modules)

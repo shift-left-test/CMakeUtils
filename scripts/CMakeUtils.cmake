@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-cmake_minimum_required(VERSION 3.5.1 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1.3 FATAL_ERROR)
 
 # Prevent from multiple inclusion
 if(DEFINED CMAKEUTILS_INCLUDED)
@@ -200,7 +200,7 @@ function(build_executable)
     target_include_directories(${BUILD_NAME}
       PRIVATE ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS})
     target_link_libraries(${BUILD_NAME}
-      PRIVATE GTest::GTest GMock::GMock GMock::Main ${CMAKE_THREAD_LIBS_INIT})
+      PRIVATE ${GTEST_LIBRARIES} ${GMOCK_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
     gtest_add_tests(${BUILD_NAME} "" AUTO)
   else()
     install(

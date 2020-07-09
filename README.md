@@ -10,7 +10,7 @@ A set of CMake macro extensions for a C/C++ project
 - python 2.7 or above
 - pytest
 - gcc/g++
-- CMake 3.5.1 or above
+- CMake 3.1.3 or above
 - make
 - doxygen
 

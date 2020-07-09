@@ -200,7 +200,7 @@ function(build_executable)
     target_include_directories(${BUILD_NAME}
       PRIVATE ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS})
     target_link_libraries(${BUILD_NAME}
-      PRIVATE ${GTEST_LIBRARIES} ${GMOCK_BOTH_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+      PRIVATE ${GTEST_LIBRARIES} GMock::GMock GMock::Main ${CMAKE_THREAD_LIBS_INIT})
     gtest_add_tests(${BUILD_NAME} "" AUTO)
   else()
     install(

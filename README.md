@@ -23,7 +23,7 @@ A set of CMake macro extensions for a C/C++ project
 
 ### How to run the tests
 
-    $ ./runtest.sh
+    $ py.test
 
 
 ### How to configure CMakeLists.txt files under the test directory

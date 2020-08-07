@@ -77,6 +77,24 @@ build_static_library(
 )
 ```
 
+To create an external static library:
+```cmake
+build_external_static_library(
+  NAME <name>
+  PREFIX <prefix>
+  SUFFIX <suffix>
+  SRCS <list of source files>
+  LIBS <list of libraries>
+  PRIVATE_HEADERS <list of private header paths>
+  PUBLIC_HEADERS <list of public header paths>
+  CFLAGS <list of C compilation flags>
+  CPPFLAGS <list of pre-processing flags>
+  CXXFLAGS <list of CXX compilation flags>
+  COMPILE_OPTIONS <list of compilation flags>
+  LINK_OPTIONS <list of linker flags>
+)
+```
+
 To create a shared library:
 ```cmake
 build_shared_library(
@@ -96,9 +114,43 @@ build_shared_library(
 )
 ```
 
+To create an external shared library:
+```cmake
+build_external_shared_library(
+  NAME <name>
+  PREFIX <prefix>
+  SUFFIX <suffix>
+  VERSION <verion number>
+  SRCS <list of source files>
+  LIBS <list of libraries>
+  PRIVATE_HEADERS <list of private header paths>
+  PUBLIC_HEADERS <list of public header paths>
+  CFLAGS <list of C compilation flags>
+  CPPFLAGS <list of pre-processing flags>
+  CXXFLAGS <list of CXX compilation flags>
+  COMPILE_OPTIONS <list of compilation flags>
+  LINK_OPTIONS <list of linker flags>
+)
+```
+
 To create a header-only library:
 ```cmake
-build_interface(
+build_interface_library(
+  NAME <name>
+  LIBS <list of libraries>
+  PRIVATE_HEADERS <list of private header paths>
+  PUBLIC_HEADERS <list of public header paths>
+  CFLAGS <list of C compilation flags>
+  CPPFLAGS <list of pre-processing flags>
+  CXXFLAGS <list of CXX compilation flags>
+  COMPILE_OPTIONS <list of compilation flags>
+  LINK_OPTIONS <list of linker flags>
+)
+```
+
+To create an external header-only library:
+```cmake
+build_external_interface_library(
   NAME <name>
   LIBS <list of libraries>
   PRIVATE_HEADERS <list of private header paths>

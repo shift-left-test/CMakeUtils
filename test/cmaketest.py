@@ -37,7 +37,7 @@ class Output(object):
         Returns:
           True if the output contains the text, False otherwise
         """
-        return keyword in self.output
+        return keyword in self.output.decode("utf-8")
 
     def containsAll(self, *keywords):
         for keyword in keywords:

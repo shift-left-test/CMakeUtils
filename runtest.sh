@@ -1,3 +1,3 @@
 #!/bin/bash
 
-py.test -v -s --junitxml result.xml test/*Test.py
+py.test -vv -x -s --junitxml result.xml test/*Test.py

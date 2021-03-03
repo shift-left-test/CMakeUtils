@@ -12,8 +12,6 @@ pipeline {
 	}  // stage
 	stage("Test") {
 	    steps {
-                cleanWs disableDeferredWipeout: true
-                git branch: "${env.gitlabSourceBranch}", url: "http://mod.lge.com/hub/yocto/addons/CMakeUtils.git"
 		sh "pytest -xvv --junitxml result.xml"
 	    }
 	}  // stage

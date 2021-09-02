@@ -1,6 +1,6 @@
 # CMakeUtils
 
-[![Build Status](http://10.177.233.77:8080/buildStatus/icon?job=CMakeUtils)](http://10.177.233.77:8080/job/CMakeUtils/)
+[![Build Status](http://10.178.85.91:8080/buildStatus/icon?job=CMakeUtils%2Fmaster)](http://10.178.85.91:8080/job/CMakeUtils/job/master/)
 
 A set of CMake macro extensions for a C/C++ project
 

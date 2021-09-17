@@ -504,7 +504,7 @@ function(register_checker)
     return()
   endif()
 
-  if(DEFINED CMAKE_CXX_${ARGS_NAME})
+  if(DEFINED CMAKE_CXX_${ARGS_NAME} AND DEFINED CMAKE_C_${ARGS_NAME})
     message(STATUS "${MESSAGE}: TRUE")
     return()
   endif()
@@ -512,6 +512,7 @@ function(register_checker)
   if(NOT ARGS_NAMES)
     message(STATUS "${MESSAGE}: TRUE")
     set(CMAKE_CXX_${ARGS_NAME} ON PARENT_SCOPE)
+    set(CMAKE_C_${ARGS_NAME} ON PARENT_SCOPE)
     return()
   endif()
 
@@ -519,6 +520,10 @@ function(register_checker)
   if(${ARGS_NAME}_PATH)
     message(STATUS "${MESSAGE}: TRUE")
     set(CMAKE_CXX_${ARGS_NAME}
+      ${${ARGS_NAME}_PATH}
+      ${ARGS_OPTIONS}
+      PARENT_SCOPE)
+    set(CMAKE_C_${ARGS_NAME}
       ${${ARGS_NAME}_PATH}
       ${ARGS_OPTIONS}
       PARENT_SCOPE)

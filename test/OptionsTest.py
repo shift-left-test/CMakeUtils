@@ -27,6 +27,13 @@ class OptionsTest(cmaketest.TestCase):
         assert result.stderr.emptyOf("cmake", "make")
         assert "/2/2/2/main" in result.files()
 
+    def testEnableStaticAnalysis(self):
+        result = self.runCMake("test/enable_static_analysis")
+        assert result.stderr.emptyOf("cmake")
+        assert result.stderr["make"].contains("warning: Dereference of undefined pointer value")
+        assert result.stderr["make"].contains("note: 'p' declared without an initial value")
+        assert result.stderr["make"].contains("No copyright message found")
+
     def testEnableTestCoverage(self):
         result = self.runCMake("test/enable_test_coverage")
         assert result.stderr.emptyOf("cmake", "make", "test", "coverage")

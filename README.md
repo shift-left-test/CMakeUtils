@@ -36,6 +36,15 @@ You may run the following command at the top-level directory
     $ ./bootstrap.py -d <DIRECTORY> [-m <MAINTAINER> -p <PROJECT>]
 
 
+### How to install googletest (gtest, gmock) libraries
+
+    $ sudo apt-get install cmake googletest g++
+    $ mkdir build ; cd build
+    $ cmake /usr/src/googletest/
+    $ make -j
+    $ sudo find . -name "*.a" -exec cp {} /usr/lib \;
+
+
 ### Build module recipes
 
 Here are examples of how to use the script to build programs and libraries from source.

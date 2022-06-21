@@ -218,7 +218,15 @@ function(build_executable)
   if(BUILD_TYPE STREQUAL "TEST")
     find_package(Threads REQUIRED)
     find_package(GTest REQUIRED)
-    find_package(GMock REQUIRED)
+    find_package(GMock QUIET)
+
+    if(GMock_FOUND)
+      message(STATUS "Found GMock: ${GMOCK_LIBRARIES}")
+      set(MAIN_LIBRARIES ${GMOCK_MAIN_LIBRARIES})
+    else()
+      message(STATUS "Found GMock: FALSE")
+      set(MAIN_LIBRARIES ${GTEST_MAIN_LIBRARIES})
+    endif()
 
     set_target_properties(${BUILD_NAME} PROPERTIES
       CXX_STANDARD ${CXX_STANDARD_VALUE}
@@ -229,7 +237,7 @@ function(build_executable)
     target_include_directories(${BUILD_NAME}
       PRIVATE ${GTEST_INCLUDE_DIRS} ${GMOCK_INCLUDE_DIRS})
     target_link_libraries(${BUILD_NAME}
-      PRIVATE ${GTEST_LIBRARIES} GMock::GMock GMock::Main ${CMAKE_THREAD_LIBS_INIT})
+      PRIVATE ${GTEST_LIBRARIES} ${GMOCK_LIBRARIES} ${MAIN_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
     gtest_add_tests(${BUILD_NAME} "" AUTO)
   else()
     if(NOT BUILD_NO_INSTALL)

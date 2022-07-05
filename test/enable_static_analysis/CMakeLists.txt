@@ -6,7 +6,7 @@ include(CMakeUtils)
 
 set_default_build_type(Debug)
 
-enable_static_analysis()
+enable_static_analysis(clang-tidy cppcheck cpplint iwyu lwyu)
 
 build_program(
   NAME a.out

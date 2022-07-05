@@ -199,15 +199,26 @@ build_debian_package(
 )
 ```
 
-To enable static analysis checkers (This function call should be located at the end of the top-level CMakeLists.txt):
+To enable static analysis checkers:
 ```cmake
 enable_static_analysis()
 ```
 
-All of the static checkers are enabled by default, however you can disable specific checkers by using the 'NO_***' keywords as below:
+From 1.4.0, static analysis checkers are not enabled by default. You should explicitly define checkers to use.
+For instance, the following command enables all of the static analysis checkers if available.
+
 ```cmake
-enable_static_analysis(NO_CLANG_TIDY NO_CPPCHECK NO_CPPLINT NO_IWYU NO_LWYU)
+enable_static_analysis(clang-tidy cppcheck cpplint iwyu lwyu)
 ```
+
+You may find useful information about the static analysis tools with the following links:
+
+- clang-tidy: https://clang.llvm.org/extra/clang-tidy/
+- cppcheck: https://cppcheck.sourceforge.io/
+- cpplint: https://github.com/cpplint/cpplint
+- iwyu: https://include-what-you-use.org/
+- lwyu: https://cmake.org/cmake/help/latest/prop_tgt/LINK_WHAT_YOU_USE.html
+
 
 To enable test coverage report (requires gcovr):
 ```cmake

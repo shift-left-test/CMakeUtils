@@ -11,7 +11,7 @@ include(CMakeUtils)
 set_cxx_standard(11)
 set_default_build_type(Release)
 
-enable_static_analysis(NO_IWYU)
+enable_static_analysis(clang-tidy cppcheck cpplint iwyu lwyu)
 enable_testing()
 enable_test_coverage()
 enable_doxygen()

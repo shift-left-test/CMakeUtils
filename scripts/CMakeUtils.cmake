@@ -222,7 +222,7 @@ function(build_executable)
 
     if(GMock_FOUND)
       message(STATUS "Found GMock: ${GMOCK_LIBRARIES}")
-      set(MAIN_LIBRARIES ${GMOCK_MAIN_LIBRARIES})
+      set(MAIN_LIBRARIES GMock::Main)
     else()
       message(STATUS "Found GMock: FALSE")
       set(MAIN_LIBRARIES ${GTEST_MAIN_LIBRARIES})

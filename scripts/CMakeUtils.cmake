@@ -217,8 +217,8 @@ function(build_executable)
 
   if(BUILD_TYPE STREQUAL "TEST")
     find_package(Threads REQUIRED)
-    find_package(GTest REQUIRED)
     find_package(GMock QUIET)
+    find_package(GTest REQUIRED)
 
     if(GMock_FOUND)
       message(STATUS "Found GMock: ${GMOCK_LIBRARIES}")

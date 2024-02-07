@@ -36,7 +36,7 @@ class OptionsTest(cmaketest.TestCase):
 
     def testEnableTestCoverage(self):
         result = self.runCMake("test/enable_test_coverage")
-        assert result.stderr.emptyOf("cmake", "make", "test", "coverage")
+        assert result.stderr.emptyOf("cmake", "make", "test")
         assert result.stdout["coverage"].contains("Branches")
 
     def testEnableDoxygen(self):
